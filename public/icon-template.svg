@@ -1,0 +1,26 @@
+<svg width="512" height="512" viewBox="0 0 512 512" xmlns="http://www.w3.org/2000/svg">
+  <!-- Fundo -->
+  <rect width="512" height="512" fill="#1976d2" rx="80"/>
+  
+  <!-- Letra P estilizada -->
+  <path d="M 150 120 L 150 380 L 250 380 Q 320 380 320 310 Q 320 250 280 220 Q 320 190 320 130 Q 320 60 250 60 L 150 60 Z" 
+        fill="white" 
+        stroke="white" 
+        stroke-width="8"/>
+  <rect x="150" y="60" width="80" height="160" fill="#1976d2"/>
+  
+  <!-- Linha decorativa -->
+  <line x1="150" y1="220" x2="280" y2="220" 
+        stroke="white" 
+        stroke-width="12" 
+        stroke-linecap="round"/>
+  
+  <!-- Texto "OUVIDORIA" pequeno -->
+  <text x="256" y="420" 
+        font-family="Arial, sans-serif" 
+        font-size="32" 
+        font-weight="bold" 
+        fill="white" 
+        text-anchor="middle">OUVIDORIA</text>
+</svg>
+

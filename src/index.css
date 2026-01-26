@@ -1,0 +1,347 @@
+:root {
+  font-family: 'Inter', 'Roboto', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Oxygen, Ubuntu, Cantarell, sans-serif;
+  line-height: 1.6;
+  font-weight: 400;
+
+  color-scheme: light;
+  color: #1A1A1A;
+  background-color: #FFFFFF;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+a {
+  font-weight: 500;
+  color: #646cff;
+  text-decoration: inherit;
+}
+a:hover {
+  color: #535bf2;
+}
+
+body {
+  margin: 0;
+  min-width: 320px;
+  min-height: 100vh;
+  background-color: #ffffff !important;
+  color: #213547;
+}
+
+#root {
+  background-color: #ffffff !important;
+}
+
+/* Melhorar contraste de links para WCAG 2.1 AA */
+a {
+  color: #005FDB;
+  text-decoration: underline;
+  transition: color 0.2s ease-in-out;
+}
+
+a:hover {
+  color: #0048A8;
+  text-decoration: underline;
+}
+
+a:focus {
+  outline: 3px solid #005FDB;
+  outline-offset: 2px;
+  border-radius: 4px;
+}
+
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
+}
+
+button {
+  border-radius: 8px;
+  border: 1px solid transparent;
+  padding: 0.6em 1.2em;
+  font-size: 1em;
+  font-weight: 500;
+  font-family: inherit;
+  background-color: #1a1a1a;
+  cursor: pointer;
+  transition: border-color 0.25s;
+}
+button:hover {
+  border-color: #646cff;
+}
+button:focus,
+button:focus-visible {
+  outline: 4px auto -webkit-focus-ring-color;
+}
+
+@media (prefers-color-scheme: light) {
+  :root {
+    color: #213547;
+    background-color: #ffffff;
+  }
+  a:hover {
+    color: #747bff;
+  }
+  button {
+    background-color: #f9f9f9;
+  }
+}
+
+/* Estilos de Alto Contraste - WCAG 2.1 AA */
+body.high-contrast {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast * {
+  background-color: #000000 !important;
+  color: #ffffff !important;
+  border-color: #ffffff !important;
+}
+
+body.high-contrast a,
+body.high-contrast button,
+body.high-contrast [role="button"] {
+  border: 2px solid #ffffff !important;
+  outline: 2px solid #ffffff !important;
+}
+
+body.high-contrast a:focus,
+body.high-contrast button:focus,
+body.high-contrast [role="button"]:focus {
+  outline: 3px solid #ffff00 !important;
+  outline-offset: 2px !important;
+}
+
+body.high-contrast .MuiAppBar-root {
+  background-color: #000000 !important;
+  border-bottom: 2px solid #ffffff !important;
+}
+
+body.high-contrast .MuiDrawer-paper {
+  background-color: #000000 !important;
+  border-right: 2px solid #ffffff !important;
+}
+
+body.high-contrast .MuiButton-contained {
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .MuiButton-outlined {
+  border: 2px solid #ffffff !important;
+  color: #ffffff !important;
+}
+
+body.high-contrast .MuiIconButton-root {
+  border: 2px solid #ffffff !important;
+}
+
+body.high-contrast .MuiSwitch-root .MuiSwitch-switchBase.Mui-checked {
+  color: #ffffff !important;
+}
+
+body.high-contrast .MuiSwitch-root .MuiSwitch-switchBase.Mui-checked + .MuiSwitch-track {
+  background-color: #ffffff !important;
+}
+
+/* ============================================
+   MODOS DALTÔNICOS (Color Blind Filters)
+   ============================================ */
+
+/* Protanopia - Red-blind (ausência de cones vermelhos) */
+body.colorblind-protanopia {
+  filter: url('#protanopia-filter');
+}
+
+body.colorblind-protanopia * {
+  filter: inherit;
+}
+
+/* Deuteranopia - Green-blind (ausência de cones verdes) */
+body.colorblind-deuteranopia {
+  filter: url('#deuteranopia-filter');
+}
+
+body.colorblind-deuteranopia * {
+  filter: inherit;
+}
+
+/* Tritanopia - Blue-blind (ausência de cones azuis) */
+body.colorblind-tritanopia {
+  filter: url('#tritanopia-filter');
+}
+
+body.colorblind-tritanopia * {
+  filter: inherit;
+}
+
+/* SVG Filters para daltônicos (serão injetados via JavaScript) */
+.accessibility-filters {
+  position: absolute;
+  width: 0;
+  height: 0;
+  visibility: hidden;
+}
+
+/* ============================================
+   MODO LEITURA FÁCIL (Easy Reading)
+   ============================================ */
+body.easy-reading {
+  font-size: 1.2em !important;
+  line-height: 2 !important;
+  letter-spacing: 0.05em !important;
+}
+
+body.easy-reading * {
+  line-height: 2 !important;
+}
+
+body.easy-reading h1,
+body.easy-reading h2,
+body.easy-reading h3,
+body.easy-reading h4,
+body.easy-reading h5,
+body.easy-reading h6 {
+  line-height: 1.5 !important;
+  margin-bottom: 1.5em !important;
+  margin-top: 1.5em !important;
+}
+
+body.easy-reading p,
+body.easy-reading li,
+body.easy-reading span,
+body.easy-reading div {
+  margin-bottom: 1.5em !important;
+  max-width: 70ch !important;
+}
+
+body.easy-reading .MuiButton-root,
+body.easy-reading button {
+  padding: 1em 2em !important;
+  font-size: 1.1em !important;
+  min-height: 48px !important;
+}
+
+body.easy-reading .MuiTextField-root,
+body.easy-reading input,
+body.easy-reading textarea {
+  font-size: 1.1em !important;
+  padding: 1em !important;
+  min-height: 48px !important;
+}
+
+body.easy-reading .MuiCard-root,
+body.easy-reading .MuiPaper-root {
+  padding: 2em !important;
+  margin-bottom: 2em !important;
+}
+
+/* Remover elementos complexos */
+body.easy-reading .MuiChip-root,
+body.easy-reading .MuiBadge-root,
+body.easy-reading [aria-label*="badge"],
+body.easy-reading [aria-label*="chip"] {
+  display: none !important;
+}
+
+/* ============================================
+   MODO SOMENTE TEXTO (Text Only)
+   ============================================ */
+body.text-only img,
+body.text-only svg:not(.accessibility-icon),
+body.text-only [role="img"],
+body.text-only picture,
+body.text-only video,
+body.text-only iframe,
+body.text-only canvas {
+  display: none !important;
+}
+
+body.text-only [class*="icon"],
+body.text-only [class*="Icon"],
+body.text-only .MuiSvgIcon-root:not(.accessibility-icon),
+body.text-only i[class*="icon"],
+body.text-only i[class*="Icon"] {
+  display: none !important;
+}
+
+/* Substituir ícones por texto alternativo */
+body.text-only [aria-label]::before {
+  content: '[' attr(aria-label) ']';
+  font-size: 0.9em;
+  color: #666;
+  margin-right: 0.5em;
+}
+
+body.text-only button[aria-label]::before,
+body.text-only a[aria-label]::before {
+  content: '[' attr(aria-label) '] ';
+}
+
+/* Remover animações e transições */
+body.text-only *,
+body.text-only *::before,
+body.text-only *::after {
+  animation: none !important;
+  transition: none !important;
+  transform: none !important;
+}
+
+body.text-only [style*="animation"],
+body.text-only [style*="transition"] {
+  animation: none !important;
+  transition: none !important;
+}
+
+/* Remover backgrounds complexos */
+body.text-only [style*="background-image"],
+body.text-only [style*="background:"] {
+  background: #ffffff !important;
+  background-image: none !important;
+}
+
+body.text-only .MuiAppBar-root,
+body.text-only header {
+  background: #ffffff !important;
+  border-bottom: 2px solid #000000 !important;
+}
+
+/* Garantir contraste em modo texto */
+body.text-only {
+  color: #000000 !important;
+  background-color: #ffffff !important;
+}
+
+body.text-only * {
+  color: #000000 !important;
+  background-color: transparent !important;
+}
+
+body.text-only a {
+  color: #0000ff !important;
+  text-decoration: underline !important;
+  border-bottom: 1px solid #0000ff !important;
+}
+
+body.text-only button,
+body.text-only .MuiButton-root {
+  border: 2px solid #000000 !important;
+  background-color: #ffffff !important;
+  color: #000000 !important;
+  padding: 0.75em 1.5em !important;
+}
+
+body.text-only button:hover,
+body.text-only .MuiButton-root:hover {
+  background-color: #f0f0f0 !important;
+}
+
+body.text-only button:focus,
+body.text-only .MuiButton-root:focus {
+  outline: 3px solid #0000ff !important;
+  outline-offset: 2px !important;
+}
