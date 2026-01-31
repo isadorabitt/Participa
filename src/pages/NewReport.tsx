@@ -145,16 +145,17 @@ export const NewReport = () => {
         }}
         paragraph
       >
-        Preencha os dados abaixo para criar um novo registro. Você pode navegar entre as etapas 
+        Preencha os dados abaixo para criar um novo registro. Você pode navegar entre as etapas
         usando o menu lateral ou os botões de navegação.
       </Typography>
 
       <Paper
         elevation={0}
         sx={{
-          padding: { xs: 3, sm: 4, md: 5 },
+          padding: { xs: 2.5, sm: 4, md: 5 },
           backgroundColor: '#FFFFFF',
           border: '1px solid #E8E9EB',
+          borderRadius: { xs: 2.5, sm: 3 },
         }}
       >
         <Stepper activeStep={activeStep} orientation="vertical">

@@ -5,6 +5,7 @@ import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
 import { AccessibilityDialog } from './AccessibilityDialog';
 import { VirtualAssistant } from './VirtualAssistant';
+import { MobileTabBar } from './MobileTabBar';
 import { Outlet } from 'react-router-dom';
 import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
 import { ColorBlindFilters } from '../utils/colorBlindFilters';
@@ -48,7 +49,7 @@ export const Layout = () => {
 
     window.addEventListener('toggle-menu', handleToggleMenu);
     window.addEventListener('open-accessibility-dialog', handleOpenAccessibility);
-    
+
     return () => {
       window.removeEventListener('toggle-menu', handleToggleMenu);
       window.removeEventListener('open-accessibility-dialog', handleOpenAccessibility);
@@ -59,26 +60,27 @@ export const Layout = () => {
     <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
       <Header
         onAccessibilityClick={handleAccessibilityClick}
-        onMenuClick={isMobile ? handleMobileMenuToggle : undefined}
+      // Menu removido em favor da TabBar
       />
-      <Box sx={{ display: 'flex', flex: 1, marginTop: '64px' }}>
-        <Sidebar mobileOpen={mobileMenuOpen} onMobileClose={handleMobileMenuClose} />
+      <Box sx={{ display: 'flex', flex: 1, marginTop: { xs: '64px', sm: '72px' } }}>
+        {!isMobile && <Sidebar mobileOpen={mobileMenuOpen} onMobileClose={handleMobileMenuClose} />}
         <Box
           component="main"
           sx={{
             flexGrow: 1,
-            p: { xs: 3, sm: 4, md: 5 },
+            p: { xs: 2, sm: 4, md: 6 },
             backgroundColor: '#FAFBFC',
-            minHeight: 'calc(100vh - 128px)',
+            minHeight: 'calc(100vh - 72px)',
             width: { xs: '100%', md: `calc(100% - 240px)` },
             marginLeft: { xs: 0, md: '240px' },
-            marginTop: { xs: '64px', sm: '72px' },
+            paddingBottom: { xs: '100px', md: '60px' }, // Espaço para a TabBar no mobile
           }}
         >
           <Outlet />
         </Box>
       </Box>
       <Footer />
+      <MobileTabBar />
       <AccessibilityDialog open={accessibilityDialogOpen} onClose={handleCloseDialog} />
       <VirtualAssistant />
       <ColorBlindFilters />
