@@ -1,6 +1,14 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { useState, useEffect } from 'react';
 import type { ReportData } from '@/context/ReportContext';
+import {
+  getTrailForProtocol,
+  saveTrailForProtocol,
+  appendNextTrailEvent,
+  getNextStage,
+  createInitialTrail,
+  type TrailEvent,
+} from '@/utils/trailTracking';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Alert, AlertDescription } from '@/components/ui/alert';
@@ -8,7 +16,7 @@ import { PageLayout, PageHeader } from '@/components/PageLayout';
 import { ProtocolDisplay } from '@/components/ProtocolDisplay';
 import { ProtocolTimeline } from '@/components/ProtocolTimeline';
 import { Badge } from '@/components/ui/badge';
-import { Printer, ArrowLeft, MapPin, FileText, Calendar } from 'lucide-react';
+import { Printer, ArrowLeft, MapPin, FileText, Calendar, Sparkles } from 'lucide-react';
 import { ROUTES } from '@/config';
 
 interface StoredReport extends ReportData {
@@ -58,6 +66,16 @@ export function ProtocolDetail() {
         createdAt: new Date(found.createdAt),
         updatedAt: new Date(found.updatedAt),
       });
+      let loadedTrail = getTrailForProtocol(protocolId);
+      if (loadedTrail.length === 0) {
+        loadedTrail = createInitialTrail(protocolId, {
+          description: found.description,
+          summary: found.summary,
+          classification: found.classification,
+        });
+        saveTrailForProtocol(protocolId, loadedTrail);
+      }
+      setTrail(loadedTrail);
     } catch {
       setNotFound(true);
     }
@@ -74,6 +92,20 @@ export function ProtocolDetail() {
   const handlePrint = () => {
     globalThis.print?.();
   };
+
+  const handleSimulateNextStep = () => {
+    if (!report?.protocol) return;
+    const nextTrail = appendNextTrailEvent(report.protocol, trail, {
+      description: report.description,
+      summary: report.summary,
+      classification: report.classification ?? undefined,
+    });
+    if (nextTrail.length === trail.length) return;
+    saveTrailForProtocol(report.protocol, nextTrail);
+    setTrail(nextTrail);
+  };
+
+  const canSimulateNextStep = getNextStage(trail) !== null;
 
   if (notFound || !protocolId) {
     return (
@@ -225,12 +257,27 @@ export function ProtocolDetail() {
       </section>
 
       <section className="mb-8" aria-labelledby="timeline-heading">
-        <h2 id="timeline-heading" className="mb-4 text-lg font-semibold text-foreground">
-          Acompanhamento
-        </h2>
+        <div className="mb-4 flex flex-wrap items-center justify-between gap-2">
+          <h2 id="timeline-heading" className="text-lg font-semibold text-foreground">
+            Trilhagem e acompanhamento
+          </h2>
+          {canSimulateNextStep && (
+            <Button
+              type="button"
+              variant="outline"
+              size="sm"
+              onClick={handleSimulateNextStep}
+              className="gap-1.5 text-participa-blue hover:bg-participa-blue/10"
+              aria-label="Simular próxima etapa do protocolo (IA)"
+            >
+              <Sparkles className="h-4 w-4" aria-hidden />
+              Simular próxima etapa (IA)
+            </Button>
+          )}
+        </div>
         <Card>
           <CardContent className="p-6 sm:p-8">
-            <ProtocolTimeline />
+            <ProtocolTimeline trail={trail.length > 0 ? trail : undefined} />
           </CardContent>
         </Card>
       </section>
