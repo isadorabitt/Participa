@@ -9,11 +9,12 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'offline.html'],
+      manifestFilename: 'manifest.json',
       manifest: {
         name: 'Participa - Sistema de Ouvidoria',
         short_name: 'Participa',
         description: 'Sistema de ouvidoria digital para registro de manifestações cidadãs',
-        theme_color: '#005FDB',
+        theme_color: '#000000',
         background_color: '#ffffff',
         display: 'standalone',
         start_url: '/',
