@@ -1,87 +1,63 @@
-import { Box, Container, Typography } from '@mui/material';
+import { Link } from 'react-router-dom';
+import { Instagram, Facebook, Twitter, Youtube, type LucideIcon } from 'lucide-react';
+import { FOOTER_LINKS, FOOTER_ADDRESS, SOCIAL_LINKS } from '@/config';
+import { cn } from '@/lib/utils';
 
-export const Footer = () => {
-  return (
-    <Box
-      component="footer"
-      sx={{
-        backgroundColor: '#FFFFFF',
-        padding: { xs: 3, sm: 4 },
-        marginTop: 'auto',
-        borderTop: '1px solid #E8E9EB',
-      }}
-      role="contentinfo"
-    >
-      <Container maxWidth="lg">
-        <Box
-          sx={{
-            display: 'flex',
-            justifyContent: 'center',
-            alignItems: 'center',
-            gap: { xs: 4, sm: 6 },
-            marginBottom: 3,
-            flexWrap: 'wrap',
-            paddingY: 2.5,
-          }}
-        >
-          <Box
-            component="img"
-            src="/logo-ouvidoria.svg"
-            alt="Logo Ouvidoria do Governo do Distrito Federal"
-            sx={{
-              height: { xs: 55, sm: 75 },
-              width: 'auto',
-              maxWidth: { xs: '45%', sm: 'auto' },
-              objectFit: 'contain',
-              filter: 'drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.08))',
-            }}
-          />
-          <Box
-            component="img"
-            src="/logo-participa-azul.svg"
-            alt="Logo Participa DF"
-            sx={{
-              height: { xs: 45, sm: 65 },
-              width: 'auto',
-              maxWidth: { xs: '45%', sm: 'auto' },
-              objectFit: 'contain',
-              filter: 'drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.08))',
-            }}
-          />
-        </Box>
-        <Box
-          sx={{
-            borderTop: '1px solid #E8E9EB',
-            paddingTop: 3,
-            marginTop: 2,
-          }}
-        >
-          <Typography
-            variant="body2"
-            sx={{
-              fontSize: { xs: '0.875rem', sm: '0.9375rem' },
-              color: '#4A4A4A',
-              textAlign: 'center',
-              fontWeight: 500,
-              marginBottom: 1,
-            }}
-          >
-            © {new Date().getFullYear()} Ouvidoria do Governo do Distrito Federal - Participa DF
-          </Typography>
-          <Typography
-            variant="body2"
-            sx={{
-              fontSize: { xs: '0.8125rem', sm: '0.875rem' },
-              color: '#8B9099',
-              textAlign: 'center',
-              fontWeight: 400,
-            }}
-          >
-            Desenvolvido com foco em transparência e participação cidadã
-          </Typography>
-        </Box>
-      </Container>
-    </Box>
-  );
+const SOCIAL_ICON_MAP: Record<string, LucideIcon> = {
+  instagram: Instagram,
+  facebook: Facebook,
+  twitter: Twitter,
+  youtube: Youtube,
 };
 
+export function Footer() {
+  return (
+    <footer
+      className="mt-auto border-t border-participa-blue/20 bg-[#0a1628] text-white"
+      role="contentinfo"
+    >
+      <div className="mx-auto max-w-page px-4 py-8 sm:px-6 lg:px-8">
+        <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
+          <nav aria-label="Links do rodapé">
+            <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+              {FOOTER_LINKS.map((link) => (
+                <li key={link.path + link.label}>
+                  <Link
+                    to={link.path}
+                    className="text-white transition-colors hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]"
+                  >
+                    {link.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div className="flex items-center gap-3">
+            {SOCIAL_LINKS.map((social) => {
+              const Icon = SOCIAL_ICON_MAP[social.iconName];
+              return (
+                <a
+                  key={social.label}
+                  href={social.href}
+                  aria-label={social.label}
+                  className={cn(
+                    'flex h-9 w-9 items-center justify-center rounded-lg text-white transition-all hover:scale-105 hover:bg-white/15 hover:text-white',
+                    'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white focus-visible:ring-offset-2 focus-visible:ring-offset-[#0a1628]'
+                  )}
+                >
+                  {Icon ? <Icon className="h-4 w-4" /> : null}
+                </a>
+              );
+            })}
+          </div>
+        </div>
+        <p className="mt-6 text-sm text-white">
+          {FOOTER_ADDRESS.text}
+        </p>
+        <p className="mt-2 text-xs text-white">
+          © {new Date().getFullYear()} Participa DF
+        </p>
+      </div>
+    </footer>
+  );
+}

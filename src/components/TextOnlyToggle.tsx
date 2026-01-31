@@ -1,32 +1,26 @@
-import { Box, Typography, Switch, FormControlLabel } from '@mui/material';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useAccessibility } from '@/context/AccessibilityContext';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
-export const TextOnlyToggle = () => {
+export function TextOnlyToggle() {
   const { textOnly, toggleTextOnly } = useAccessibility();
 
   return (
-    <Box>
-      <FormControlLabel
-        control={
-          <Switch
-            checked={textOnly}
-            onChange={toggleTextOnly}
-            aria-label="Modo somente texto"
-          />
-        }
-        label={
-          <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              Modo Somente Texto
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Remove imagens, ícones e animações, exibindo apenas texto para melhor compatibilidade com leitores de tela.
-            </Typography>
-          </Box>
-        }
-        sx={{ margin: 0, alignItems: 'flex-start' }}
+    <div className="flex items-start gap-3">
+      <Switch
+        id="text-only"
+        checked={textOnly}
+        onCheckedChange={toggleTextOnly}
+        aria-label="Modo somente texto"
       />
-    </Box>
+      <div className="grid gap-1">
+        <Label htmlFor="text-only" className="text-sm font-semibold cursor-pointer">
+          Modo Somente Texto
+        </Label>
+        <p className="text-xs text-muted-foreground">
+          Remove imagens, ícones e animações, exibindo apenas texto para melhor compatibilidade com leitores de tela.
+        </p>
+      </div>
+    </div>
   );
-};
-
+}

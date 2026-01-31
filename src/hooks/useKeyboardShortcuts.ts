@@ -1,48 +1,43 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { ROUTES } from '@/config';
 
 /**
- * Hook para gerenciar atalhos de teclado de acessibilidade
+ * Hook para gerenciar atalhos de teclado de acessibilidade.
+ * Responsabilidade única: registrar listeners e delegar navegação/callbacks.
  */
-export const useKeyboardShortcuts = (onAccessibilityClick?: () => void) => {
+export function useKeyboardShortcuts(onAccessibilityClick?: () => void): void {
   const navigate = useNavigate();
 
   useEffect(() => {
     const handleKeyDown = (event: KeyboardEvent) => {
-      // Ignorar se estiver digitando em um input, textarea ou contenteditable
       const target = event.target as HTMLElement;
-      if (
+      const isTyping =
         target.tagName === 'INPUT' ||
         target.tagName === 'TEXTAREA' ||
-        target.isContentEditable
-      ) {
+        target.isContentEditable;
+      if (isTyping) return;
+
+      const key = event.key.toLowerCase();
+
+      if (event.altKey && key === 'n') {
+        event.preventDefault();
+        navigate(ROUTES.NEW_REPORT);
+        return;
+      }
+      if (event.altKey && key === 'i') {
+        event.preventDefault();
+        navigate(ROUTES.HOME);
         return;
       }
 
-      // ALT + N → Novo Registro
-      if (event.altKey && event.key.toLowerCase() === 'n') {
+      if (event.altKey && key === 'a') {
         event.preventDefault();
-        navigate('/novo-registro');
+        onAccessibilityClick?.();
+        return;
       }
-
-      // ALT + I → Início
-      if (event.altKey && event.key.toLowerCase() === 'i') {
+      if (event.altKey && key === 'm') {
         event.preventDefault();
-        navigate('/');
-      }
-
-      // ALT + A → Acessibilidade
-      if (event.altKey && event.key.toLowerCase() === 'a') {
-        event.preventDefault();
-        if (onAccessibilityClick) {
-          onAccessibilityClick();
-        }
-      }
-
-      // ALT + M → Menu (toggle sidebar em mobile)
-      if (event.altKey && event.key.toLowerCase() === 'm') {
-        event.preventDefault();
-        // Disparar evento customizado para toggle do menu
         window.dispatchEvent(new CustomEvent('toggle-menu'));
       }
     };

@@ -1,22 +1,15 @@
-import {
-  Box,
-  Button,
-  IconButton,
-  Typography,
-  Paper,
-  Alert,
-  CircularProgress,
-} from '@mui/material';
-import {
-  Mic as MicIcon,
-  Pause as PauseIcon,
-  Stop as StopIcon,
-  PlayArrow as PlayArrowIcon,
-  Delete as DeleteIcon,
-  Refresh as RefreshIcon,
-} from '@mui/icons-material';
 import { useReport } from '../context/ReportContext';
 import { useState, useRef, useEffect } from 'react';
+import { Button } from './ui/button';
+import { Alert, AlertDescription } from './ui/alert';
+import { Card, CardContent, CardHeader } from './ui/card';
+import { Mic, Pause, Square, Play, Trash2, RotateCcw, Loader2 } from 'lucide-react';
+
+const formatTime = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = seconds % 60;
+  return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+};
 
 export const AudioRecorder = () => {
   const { updateAudio } = useReport();
@@ -33,109 +26,62 @@ export const AudioRecorder = () => {
   const timerRef = useRef<number | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
-  // Limpar recursos ao desmontar
   useEffect(() => {
     return () => {
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-      }
-      if (audioUrl) {
-        URL.revokeObjectURL(audioUrl);
-      }
+      streamRef.current?.getTracks().forEach((track) => track.stop());
+      if (audioUrl) URL.revokeObjectURL(audioUrl);
     };
   }, [audioUrl]);
 
-  // Timer de gravação
   useEffect(() => {
     if (isRecording && !isPaused) {
-      timerRef.current = window.setInterval(() => {
-        setRecordingTime((prev) => prev + 1);
-      }, 1000);
-    } else {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-        timerRef.current = null;
-      }
+      timerRef.current = window.setInterval(() => setRecordingTime((prev) => prev + 1), 1000);
+    } else if (timerRef.current) {
+      clearInterval(timerRef.current);
+      timerRef.current = null;
     }
-
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
+      if (timerRef.current) clearInterval(timerRef.current);
     };
   }, [isRecording, isPaused]);
-
-  const formatTime = (seconds: number): string => {
-    const mins = Math.floor(seconds / 60);
-    const secs = seconds % 60;
-    return `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
-  };
 
   const startRecording = async () => {
     try {
       setError(null);
       const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
       streamRef.current = stream;
-
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus',
-      });
+      const mediaRecorder = new MediaRecorder(stream, { mimeType: 'audio/webm;codecs=opus' });
       mediaRecorderRef.current = mediaRecorder;
       chunksRef.current = [];
 
       mediaRecorder.ondataavailable = (event) => {
-        if (event.data.size > 0) {
-          chunksRef.current.push(event.data);
-        }
+        if (event.data.size > 0) chunksRef.current.push(event.data);
       };
 
       mediaRecorder.onstop = async () => {
         const blob = new Blob(chunksRef.current, { type: 'audio/webm' });
         const url = URL.createObjectURL(blob);
         setAudioUrl(url);
-
-        // Criar arquivo e atualizar contexto
-        const audioFile = new File([blob], `audio-${Date.now()}.webm`, {
-          type: 'audio/webm',
-        });
-
-        // Converter para base64
+        const audioFile = new File([blob], `audio-${Date.now()}.webm`, { type: 'audio/webm' });
         try {
           const reader = new FileReader();
           reader.readAsDataURL(blob);
           reader.onload = () => {
-            const dataUrl = reader.result as string;
-            updateAudio({
-              file: audioFile,
-              dataUrl: dataUrl,
-            });
+            updateAudio({ file: audioFile, dataUrl: reader.result as string });
           };
-          reader.onerror = () => {
-            // Se falhar a conversão, ainda salva o arquivo
-            updateAudio({
-              file: audioFile,
-            });
-          };
-        } catch (err) {
-          // Se falhar a conversão, ainda salva o arquivo
-          updateAudio({
-            file: audioFile,
-          });
+          reader.onerror = () => updateAudio({ file: audioFile });
+        } catch {
+          updateAudio({ file: audioFile });
         }
       };
 
-      mediaRecorder.onerror = (event) => {
-        setError('Erro durante a gravação de áudio');
-        console.error('MediaRecorder error:', event);
-      };
-
+      mediaRecorder.onerror = () => setError('Erro durante a gravação de áudio');
       mediaRecorder.start();
       setIsRecording(true);
       setIsPaused(false);
       setRecordingTime(0);
-    } catch (err) {
+    } catch {
       setError('Não foi possível acessar o microfone. Verifique as permissões.');
-      console.error('Error accessing microphone:', err);
     }
   };
 
@@ -156,9 +102,7 @@ export const AudioRecorder = () => {
   const stopRecording = () => {
     if (mediaRecorderRef.current && isRecording) {
       mediaRecorderRef.current.stop();
-      if (streamRef.current) {
-        streamRef.current.getTracks().forEach((track) => track.stop());
-      }
+      streamRef.current?.getTracks().forEach((track) => track.stop());
       setIsRecording(false);
       setIsPaused(false);
     }
@@ -176,14 +120,8 @@ export const AudioRecorder = () => {
     }
   };
 
-  const handleAudioEnded = () => {
-    setIsPlaying(false);
-  };
-
   const deleteRecording = () => {
-    if (audioUrl) {
-      URL.revokeObjectURL(audioUrl);
-    }
+    if (audioUrl) URL.revokeObjectURL(audioUrl);
     setAudioUrl(null);
     setRecordingTime(0);
     updateAudio(null);
@@ -195,131 +133,87 @@ export const AudioRecorder = () => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography variant="h6" gutterBottom>
-        Gravação de Áudio
-      </Typography>
+    <div className="w-full">
+      <h3 className="mb-2 text-lg font-semibold">Gravação de Áudio</h3>
 
       {error && (
-        <Alert severity="error" sx={{ marginBottom: 2 }} role="alert">
-          {error}
+        <Alert variant="destructive" className="mb-4" role="alert">
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {!isRecording && !audioUrl && (
         <Button
-          variant="contained"
-          startIcon={<MicIcon />}
+          className="mb-4 w-full"
+          size="lg"
           onClick={startRecording}
           aria-label="Iniciar gravação de áudio"
-          fullWidth
-          size="large"
-          sx={{ marginBottom: 2 }}
         >
+          <Mic className="h-5 w-5" />
           Iniciar Gravação
         </Button>
       )}
 
       {isRecording && (
-        <Paper
-          elevation={2}
-          sx={{
-            padding: 3,
-            marginBottom: 2,
-            backgroundColor: 'error.light',
-            color: 'error.contrastText',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-              <CircularProgress size={24} sx={{ color: 'inherit' }} />
-              <Typography variant="h6" component="div" aria-live="polite">
+        <Card className="mb-4 border-destructive bg-destructive/10 text-destructive">
+          <CardContent className="flex items-center justify-between p-4">
+            <div className="flex items-center gap-3">
+              <Loader2 className="h-6 w-6 animate-spin" aria-hidden />
+              <span className="text-lg font-semibold" role="timer" aria-live="polite">
                 {formatTime(recordingTime)}
-              </Typography>
-            </Box>
-            <Box>
+              </span>
+            </div>
+            <div className="flex gap-1">
               {isPaused ? (
-                <IconButton
-                  onClick={resumeRecording}
-                  aria-label="Retomar gravação"
-                  sx={{ color: 'inherit' }}
-                >
-                  <PlayArrowIcon />
-                </IconButton>
+                <Button variant="ghost" size="icon" onClick={resumeRecording} aria-label="Retomar gravação">
+                  <Play className="h-5 w-5" />
+                </Button>
               ) : (
-                <IconButton
-                  onClick={pauseRecording}
-                  aria-label="Pausar gravação"
-                  sx={{ color: 'inherit' }}
-                >
-                  <PauseIcon />
-                </IconButton>
+                <Button variant="ghost" size="icon" onClick={pauseRecording} aria-label="Pausar gravação">
+                  <Pause className="h-5 w-5" />
+                </Button>
               )}
-              <IconButton
-                onClick={stopRecording}
-                aria-label="Parar gravação"
-                sx={{ color: 'inherit' }}
-              >
-                <StopIcon />
-              </IconButton>
-            </Box>
-          </Box>
-        </Paper>
+              <Button variant="ghost" size="icon" onClick={stopRecording} aria-label="Parar gravação">
+                <Square className="h-5 w-5" />
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
       {audioUrl && (
-        <Paper elevation={2} sx={{ padding: 3, marginBottom: 2 }}>
-          <Typography variant="subtitle1" gutterBottom>
-            Áudio Gravado
-          </Typography>
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2, marginBottom: 2 }}>
-            <audio
-              ref={audioRef}
-              src={audioUrl}
-              onEnded={handleAudioEnded}
-              aria-label="Preview do áudio gravado"
-            />
-            <IconButton
-              onClick={playAudio}
-              aria-label={isPlaying ? 'Pausar áudio' : 'Reproduzir áudio'}
-              color="primary"
-              size="large"
-            >
-              <PlayArrowIcon />
-            </IconButton>
-            <Typography variant="body2" color="text.secondary">
-              Duração: {formatTime(recordingTime)}
-            </Typography>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 2 }}>
-            <Button
-              variant="outlined"
-              startIcon={<RefreshIcon />}
-              onClick={reRecord}
-              aria-label="Regravar áudio"
-            >
-              Regravar
-            </Button>
-            <Button
-              variant="outlined"
-              color="error"
-              startIcon={<DeleteIcon />}
-              onClick={deleteRecording}
-              aria-label="Excluir áudio"
-            >
-              Excluir
-            </Button>
-          </Box>
-        </Paper>
+        <Card className="mb-4">
+          <CardHeader>
+            <h4 className="text-base font-medium">Áudio Gravado</h4>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex items-center gap-3">
+              <audio ref={audioRef} src={audioUrl} onEnded={() => setIsPlaying(false)} aria-label="Preview do áudio gravado" />
+              <Button variant="default" size="icon" onClick={playAudio} aria-label={isPlaying ? 'Pausar áudio' : 'Reproduzir áudio'}>
+                <Play className="h-5 w-5" />
+              </Button>
+              <span className="text-sm text-muted-foreground">Duração: {formatTime(recordingTime)}</span>
+            </div>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={reRecord} aria-label="Regravar áudio">
+                <RotateCcw className="h-4 w-4" />
+                Regravar
+              </Button>
+              <Button variant="outline" className="border-destructive text-destructive hover:bg-destructive/10" onClick={deleteRecording} aria-label="Excluir áudio">
+                <Trash2 className="h-4 w-4" />
+                Excluir
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      <Alert severity="info" sx={{ marginTop: 2 }} role="note">
-        <Typography variant="body2">
-          Clique em "Iniciar Gravação" e permita o acesso ao microfone quando solicitado.
+      <Alert variant="info" className="mt-4" role="note">
+        <AlertDescription>
+          Clique em &quot;Iniciar Gravação&quot; e permita o acesso ao microfone quando solicitado.
           Você pode pausar, retomar ou parar a gravação a qualquer momento.
-        </Typography>
+        </AlertDescription>
       </Alert>
-    </Box>
+    </div>
   );
 };
-

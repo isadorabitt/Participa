@@ -1,305 +1,226 @@
-import { Box, Typography, Container, Card, CardContent, CardActionArea } from '@mui/material';
 import { useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import {
-  AddCircle as AddCircleIcon,
-  Assignment as AssignmentIcon,
-  HelpOutline as HelpOutlineIcon,
-  SmartToy as SmartToyIcon,
-  QuestionAnswer as QuestionAnswerIcon,
-  Accessibility as AccessibilityIcon,
-} from '@mui/icons-material';
-import { useNavigate } from 'react-router-dom';
-import { useAccessibility } from '../context/AccessibilityContext';
+  Search,
+  Megaphone,
+  Search as SearchIcon,
+  LayoutDashboard,
+  ChevronRight,
+  Plus,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Card, CardContent } from '@/components/ui/card';
+import { SectionTitle, SECTION_BLOCK, SECTION_CONTAINER } from '@/components/PageLayout';
+import { useAccessibility } from '@/context/AccessibilityContext';
 
-export const Inicio = () => {
+const SERVICOS = [
+  {
+    title: 'Nova Manifestação',
+    description: 'Registre denúncias, elogios, sugestões ou reclamações.',
+    icon: Megaphone,
+    path: '/novo-registro',
+  },
+  {
+    title: 'Consultar Protocolo',
+    description: 'Acompanhe o andamento da sua manifestação.',
+    icon: SearchIcon,
+    path: '/meus-registros',
+  },
+  {
+    title: 'Painel Ouvidoria',
+    description: 'Indicadores e dados das ouvidorias do GDF.',
+    icon: LayoutDashboard,
+    path: '#',
+  },
+];
+
+const NOTICIAS = [
+  {
+    title: 'Oficina sobre plantas medicinais chega à segunda edição',
+    link: '#',
+    image: 'https://picsum.photos/seed/plantas-400/400/240',
+    imageAlt: 'Oficina sobre plantas medicinais',
+  },
+  {
+    title: 'Rede pública do DF na Olimpíada Nacional de Ciências',
+    link: '#',
+    image: 'https://picsum.photos/seed/olimpiada-400/400/240',
+    imageAlt: 'Estudantes na Olimpíada Nacional de Ciências',
+  },
+  {
+    title: 'Resultado definitivo da Escola de Carnaval',
+    link: '#',
+    image: 'https://picsum.photos/seed/carnaval-400/400/240',
+    imageAlt: 'Escola de Carnaval do DF',
+  },
+  {
+    title: 'Paciente cola grau no Hospital Regional de Ceilândia',
+    link: '#',
+    image: 'https://picsum.photos/seed/hospital-400/400/240',
+    imageAlt: 'Hospital Regional de Ceilândia',
+  },
+];
+
+export function Inicio() {
   const navigate = useNavigate();
   const { fontSize } = useAccessibility();
 
-  // Listener para eventos de acessibilidade e IZA
   useEffect(() => {
-    const handleOpenAccessibility = () => {
-      // Disparar evento para abrir diálogo de acessibilidade
-      window.dispatchEvent(new CustomEvent('open-accessibility-dialog'));
-    };
-
-    const handleOpenIza = () => {
-      // Disparar evento para abrir IZA
-      window.dispatchEvent(new CustomEvent('open-iza-assistant'));
-    };
-
-    window.addEventListener('open-accessibility', handleOpenAccessibility);
-    window.addEventListener('open-iza', handleOpenIza);
-
-    return () => {
-      window.removeEventListener('open-accessibility', handleOpenAccessibility);
-      window.removeEventListener('open-iza', handleOpenIza);
-    };
+    const onIza = () => globalThis.dispatchEvent(new CustomEvent('open-iza-assistant'));
+    globalThis.addEventListener('open-iza', onIza);
+    return () => globalThis.removeEventListener('open-iza', onIza);
   }, []);
 
-  const dashboardCards = [
-    {
-      title: 'Novo Registro',
-      description: 'Crie um novo registro de manifestação de forma rápida e simples',
-      icon: <AddCircleIcon fontSize="large" />,
-      color: '#005FDB',
-      path: '/novo-registro',
-      ariaLabel: 'Ir para página de novo registro',
-    },
-    {
-      title: 'Ajuda da IZA',
-      description: 'Converse com nossa assistente virtual para tirar dúvidas e obter orientações',
-      icon: <SmartToyIcon fontSize="large" />,
-      color: '#E1007A',
-      path: '#',
-      ariaLabel: 'Abrir assistente virtual IZA',
-      onClick: () => {
-        // Disparar evento para abrir IZA
-        window.dispatchEvent(new CustomEvent('open-iza'));
-      },
-    },
-    {
-      title: 'Meus Registros',
-      description: 'Visualize, acompanhe e gerencie todos os seus registros anteriores',
-      icon: <AssignmentIcon fontSize="large" />,
-      color: '#2E7D32',
-      path: '/meus-registros',
-      ariaLabel: 'Ir para página de meus registros',
-    },
-    {
-      title: 'Orientações',
-      description: 'Saiba como fazer um registro, quais informações incluir e como acompanhar',
-      icon: <HelpOutlineIcon fontSize="large" />,
-      color: '#FFC107',
-      path: '/orientacoes',
-      ariaLabel: 'Ir para página de orientações',
-    },
-    {
-      title: 'FAQ',
-      description: 'Encontre respostas para as perguntas mais frequentes sobre o sistema',
-      icon: <QuestionAnswerIcon fontSize="large" />,
-      color: '#0288D1',
-      path: '/faq',
-      ariaLabel: 'Ir para página de perguntas frequentes',
-    },
-    {
-      title: 'Acessibilidade',
-      description: 'Configure opções de acessibilidade para personalizar sua experiência',
-      icon: <AccessibilityIcon fontSize="large" />,
-      color: '#7B1FA2',
-      path: '#',
-      ariaLabel: 'Abrir configurações de acessibilidade',
-      onClick: () => {
-        // Disparar evento para abrir acessibilidade
-        window.dispatchEvent(new CustomEvent('open-accessibility'));
-      },
-    },
-  ];
-
   return (
-    <Box sx={{
-      backgroundColor: '#F8FAFC',
-      minHeight: '100%',
-      py: { xs: 2, sm: 3 },
-      px: { xs: 1, sm: 2 }
-    }}>
-      <Container maxWidth="lg">
-        <Box sx={{ marginBottom: { xs: 6, sm: 8 }, textAlign: 'center' }}>
-          <Box
-            sx={{
-              display: 'flex',
-              justifyContent: 'center',
-              alignItems: 'center',
-              gap: { xs: 3, sm: 6 },
-              marginBottom: { xs: 4, sm: 6 },
-              flexWrap: 'wrap',
-            }}
-          >
-            <Box
-              component="img"
-              src="/logo-ouvidoria.svg"
-              alt="Logo Ouvidoria"
-              sx={{
-                height: { xs: 60, sm: 100 },
-                width: 'auto',
-                filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.05))',
-              }}
-            />
-            <Box
-              component="img"
-              src="/logo-participa-azul.svg"
-              alt="Logo Participa DF"
-              sx={{
-                height: { xs: 50, sm: 85 },
-                width: 'auto',
-                filter: 'drop-shadow(0px 4px 20px rgba(0, 0, 0, 0.05))',
-              }}
-            />
-          </Box>
-          <Typography
-            variant="h2"
-            component="h1"
-            sx={{
-              fontSize: { xs: `calc(${fontSize}px * 1.75)`, sm: `calc(${fontSize}px * 2.5)` },
-              fontWeight: 900,
-              color: '#0F172A',
-              marginBottom: 2.5,
-              letterSpacing: '-0.04em',
-              lineHeight: 1.1,
-            }}
-          >
-            Sua voz constrói o DF
-          </Typography>
-          <Typography
-            variant="h6"
-            component="p"
-            sx={{
-              fontSize: { xs: `calc(${fontSize}px * 1)`, sm: `calc(${fontSize}px * 1.125)` },
-              color: '#64748B',
-              fontWeight: 400,
-              lineHeight: 1.6,
-              maxWidth: '700px',
-              marginX: 'auto',
-              px: 2
-            }}
-          >
-            Participe ativamente da gestão pública. Registre sua manifestação
-            e ajude a construir uma cidade melhor para todos os cidadãos.
-          </Typography>
-        </Box>
-
-        <Box
-          sx={{
-            display: 'grid',
-            gridTemplateColumns: {
-              xs: '1fr',
-              sm: 'repeat(2, 1fr)',
-              md: 'repeat(3, 1fr)',
-            },
-            gap: { xs: 2.5, sm: 3.5 },
-            marginBottom: 8,
-          }}
-        >
-          {dashboardCards.map((card, index) => (
-            <Card
-              key={index}
-              sx={{
-                height: '100%',
-                cursor: 'pointer',
-                borderRadius: 5,
-                border: '1px solid rgba(0, 0, 0, 0.04)',
-                backgroundColor: '#FFFFFF',
-                boxShadow: '0 4px 24px -4px rgba(0, 0, 0, 0.04)',
-                transition: 'all 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-                overflow: 'hidden',
-                '&:hover': {
-                  transform: 'translateY(-10px)',
-                  boxShadow: '0 20px 40px -12px rgba(0, 95, 219, 0.12)',
-                  borderColor: `${card.color}40`,
-                  '& .card-icon-container': {
-                    backgroundColor: `${card.color}15`,
-                    transform: 'scale(1.05) rotate(3deg)',
-                  },
-                },
-              }}
-              onClick={() => card.onClick ? card.onClick() : navigate(card.path)}
-              tabIndex={0}
-              role="button"
-              aria-label={card.ariaLabel}
+    <div className="min-h-screen bg-background">
+      {/* Hero + CTA */}
+      <section
+        className="relative border-b border-border bg-gradient-to-b from-participa-blue/10 via-participa-blue/5 to-background"
+        aria-label="Bem-vindo"
+      >
+        <div className={SECTION_CONTAINER + ' relative py-12 sm:py-16'}>
+          <div className="mx-auto max-w-2xl text-center">
+            <h1
+              className="mb-3 text-4xl font-bold tracking-tight text-foreground sm:text-4xl"
+              style={{ fontSize: `calc(${fontSize}px * 1.4)` }}
             >
-              <CardActionArea sx={{ height: '100%', p: 0 }}>
-                <CardContent sx={{ p: { xs: 3.5, sm: 4.5 }, textAlign: 'center' }}>
-                  <Box
-                    className="card-icon-container"
-                    sx={{
-                      width: 72,
-                      height: 72,
-                      borderRadius: '24px',
-                      backgroundColor: `${card.color}08`,
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      color: card.color,
-                      marginBottom: 3,
-                      marginX: 'auto',
-                      transition: 'all 0.4s ease',
-                      border: `1px solid ${card.color}15`,
-                    }}
-                  >
-                    {card.icon}
-                  </Box>
-                  <Typography
-                    variant="h5"
-                    sx={{
-                      fontWeight: 800,
-                      color: '#1E293B',
-                      marginBottom: 1.5,
-                      fontSize: `calc(${fontSize}px * 1.25)`,
-                      letterSpacing: '-0.02em',
-                    }}
-                  >
-                    {card.title}
-                  </Typography>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      color: '#64748B',
-                      lineHeight: 1.6,
-                      fontSize: `calc(${fontSize}px * 0.925)`,
-                    }}
-                  >
-                    {card.description}
-                  </Typography>
-                </CardContent>
-              </CardActionArea>
-            </Card>
-          ))}
-        </Box>
+              Portal de Participação Social do DF
+            </h1>
+            <p
+              className="mb-8 text-muted-foreground"
+              style={{ fontSize: `${fontSize}px` }}
+            >
+              Ouvidoria e Acesso à Informação em um só lugar.
+            </p>
 
-        <Box
-          sx={{
-            backgroundColor: 'rgba(255, 255, 255, 0.6)',
-            backdropFilter: 'blur(8px)',
-            borderRadius: 6,
-            padding: { xs: 4, sm: 6 },
-            border: '1px solid rgba(255, 255, 255, 0.8)',
-            boxShadow: '0 10px 30px -10px rgba(0, 0, 0, 0.05)',
-          }}
-        >
-          <Typography
-            variant="h4"
-            sx={{
-              fontWeight: 900,
-              color: '#0F172A',
-              marginBottom: 4,
-              fontSize: { xs: `calc(${fontSize}px * 1.5)`, sm: `calc(${fontSize}px * 2)` },
-              letterSpacing: '-0.03em',
-              textAlign: 'center'
-            }}
-          >
-            Experiência Simplificada
-          </Typography>
-          <Box display="grid" gridTemplateColumns={{ xs: '1fr', md: 'repeat(4, 1fr)' }} gap={4}>
-            {[
-              { step: '01', title: 'Relate', text: 'Descreva sua manifestação com textos, imagens ou áudios.' },
-              { step: '02', title: 'Identifique', text: 'Escolha entre manter o anonimato ou se identificar.' },
-              { step: '03', title: 'Protocolo', text: 'Receba na hora o número para acompanhar seu pedido.' },
-              { step: '04', title: 'Acompanhe', text: 'Veja o status e as respostas em tempo real.' },
-            ].map((item, i) => (
-              <Box key={i} textAlign="center">
-                <Typography variant="h1" sx={{ fontSize: '3rem', fontWeight: 900, color: '#005FDB15', mb: -3 }}>
-                  {item.step}
-                </Typography>
-                <Typography variant="h6" sx={{ fontWeight: 800, color: '#1E293B', mb: 1, fontSize: `${fontSize}px` }}>
-                  {item.title}
-                </Typography>
-                <Typography variant="body2" sx={{ color: '#64748B', lineHeight: 1.6, fontSize: `${fontSize}px` }}>
-                  {item.text}
-                </Typography>
-              </Box>
+            <div className="mb-8">
+              <div className="relative mx-auto max-w-md">
+                <Search
+                  className="absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground"
+                  aria-hidden
+                />
+                <Input
+                  type="search"
+                  placeholder="Buscar serviço ou informação..."
+                  className="h-11 rounded-xl border border-border bg-white/95 shadow-sm backdrop-blur pl-10 transition-shadow hover:shadow-md focus:shadow-md"
+                  aria-label="Buscar"
+                />
+              </div>
+            </div>
+
+            <Button
+              size="lg"
+              onClick={() => navigate('/novo-registro')}
+              className="gap-2 rounded-xl bg-participa-blue px-8 py-6 text-base font-semibold text-white shadow-lg transition-all hover:bg-participa-blue-dark hover:shadow-glow-sm"
+            >
+              <Plus className="h-5 w-5" aria-hidden />
+              Criar manifestação
+            </Button>
+          </div>
+        </div>
+      </section>
+
+      {/* Serviços */}
+      <section className={'border-b border-border bg-white ' + SECTION_BLOCK} aria-label="Serviços">
+        <div className={SECTION_CONTAINER}>
+          <SectionTitle>Serviços</SectionTitle>
+          <div className="grid gap-4 sm:grid-cols-3">
+            {SERVICOS.map((s) => {
+              const Icon = s.icon;
+              return (
+                <Card
+                  key={s.title}
+                  className="transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover"
+                >
+                  <CardContent className="p-5">
+                    <div className="mb-3 flex h-10 w-10 items-center justify-center rounded-xl bg-participa-blue/10 text-participa-blue">
+                      <Icon className="h-5 w-5" aria-hidden />
+                    </div>
+                    <h3 className="mb-1 font-semibold text-foreground">{s.title}</h3>
+                    <p className="mb-4 text-sm text-muted-foreground">
+                      {s.description}
+                    </p>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => s.path.startsWith('/') && navigate(s.path)}
+                      asChild={s.path.startsWith('#')}
+                      className="w-full rounded-lg border-border font-medium"
+                    >
+                      {s.path.startsWith('/') ? (
+                        <span className="inline-flex items-center gap-1">
+                          Acessar
+                          <ChevronRight className="h-4 w-4" />
+                        </span>
+                      ) : (
+                        <a href={s.path} className="inline-flex items-center gap-1">
+                          Acessar
+                          <ChevronRight className="h-4 w-4" />
+                        </a>
+                      )}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        </div>
+      </section>
+
+      {/* Notícias */}
+      <section className={'border-b border-border bg-muted/50 ' + SECTION_BLOCK} aria-label="Notícias">
+        <div className={SECTION_CONTAINER}>
+          <div className="mb-5 flex items-center justify-between sm:mb-6">
+            <SectionTitle className="mb-0">Notícias</SectionTitle>
+            <Link to="#" className="text-sm font-medium text-participa-blue hover:underline">
+              Ver todas
+            </Link>
+          </div>
+          <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {NOTICIAS.map((n) => (
+              <Card
+                key={n.title}
+                className="overflow-hidden transition-all duration-200 hover:-translate-y-0.5 hover:shadow-card-hover"
+              >
+                <a href={n.link} className="block">
+                  <img
+                    src={n.image}
+                    alt={n.imageAlt}
+                    className="h-40 w-full rounded-t-lg object-cover"
+                    width={400}
+                    height={240}
+                    loading="lazy"
+                  />
+                </a>
+                <CardContent className="p-4">
+                  <p className="mb-3 line-clamp-3 text-sm font-medium leading-snug text-foreground">
+                    {n.title}
+                  </p>
+                  <a
+                    href={n.link}
+                    className="inline-flex items-center gap-1 text-sm font-medium text-participa-blue transition-colors hover:underline"
+                  >
+                    Ler mais
+                    <ChevronRight className="h-4 w-4" />
+                  </a>
+                </CardContent>
+              </Card>
             ))}
-          </Box>
-        </Box>
-      </Container>
-    </Box>
+          </div>
+        </div>
+      </section>
+
+      {/* Banner 24h */}
+      <section
+        className="flex items-center justify-between gap-4 bg-[#0a1628] px-6 py-3 sm:px-6"
+        aria-label="Administrações Regionais 24h"
+      >
+        <span className="text-sm text-white/95">
+          Administrações Regionais <strong className="text-participa-yellow">atendem 24h</strong>
+        </span>
+        <img src="https://www.participa.df.gov.br/assets/images/participadf-branca.svg" alt="" className="h-6 w-auto" aria-hidden />
+      </section>
+    </div>
   );
-};
+}
