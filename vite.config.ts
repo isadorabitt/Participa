@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'offline.html'],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'mask-icon.svg', 'offline.html', 'screenshot-desktop.png', 'screenshot-mobile.png'],
       manifestFilename: 'manifest.json',
       manifest: {
         name: 'Participa - Sistema de Ouvidoria',
@@ -61,6 +61,22 @@ export default defineConfig({
             description: 'Visualizar meus registros',
             url: '/meus-registros',
             icons: [{ src: 'pwa-192x192.png', sizes: '192x192' }]
+          }
+        ],
+        screenshots: [
+          {
+            src: 'screenshot-desktop.png',
+            sizes: '1290x1476',
+            type: 'image/png',
+            form_factor: 'wide',
+            label: 'Interface Desktop do Participa'
+          },
+          {
+            src: 'screenshot-mobile.png',
+            sizes: '320x1514',
+            type: 'image/png',
+            form_factor: 'narrow',
+            label: 'Interface Mobile do Participa'
           }
         ]
       },
