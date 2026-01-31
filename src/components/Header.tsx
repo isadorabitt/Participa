@@ -1,6 +1,7 @@
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { Menu, LogIn, ChevronDown } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { AccessibilityButtons } from '@/components/AccessibilityButtons';
 import { MAIN_NAV_ITEMS, ROUTES } from '@/config';
 import { tokens } from '@/design-system';
 import {
@@ -40,8 +41,9 @@ export function Header({
       role="banner"
       style={{ zIndex: tokens.zIndex.modal }}
     >
-      <div className="flex h-9 items-center justify-end gap-4 bg-[#0a1628] px-4 sm:px-6 lg:px-8">
+      <div className="flex h-9 items-center justify-end gap-2 bg-[#0a1628] px-4 sm:px-6 lg:px-8">
         <span className="mr-auto text-xs text-white">Governo do Distrito Federal</span>
+        <AccessibilityButtons variant="header" className="shrink-0" />
         <Button
           asChild
           size="sm"

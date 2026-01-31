@@ -150,28 +150,16 @@ export default defineConfig({
               },
               networkTimeoutSeconds: 10
             }
-          },
-          {
-            urlPattern: ({ request }) => request.destination === 'document',
-            handler: 'NetworkFirst',
-            options: {
-              cacheName: 'pages-cache',
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 60 * 60 * 24 // 1 dia
-              },
-              networkTimeoutSeconds: 5
-            }
           }
         ],
-        navigateFallback: '/offline.html',
+        navigateFallback: '/index.html',
         navigateFallbackDenylist: [/^\/_/, /\/[^/?]+\.[^/]+$/],
         cleanupOutdatedCaches: true,
         skipWaiting: true,
         clientsClaim: true
       },
       devOptions: {
-        enabled: true,
+        enabled: false,
         type: 'module'
       }
     })

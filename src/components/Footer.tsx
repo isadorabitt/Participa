@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 import { Instagram, Facebook, Twitter, Youtube, type LucideIcon } from 'lucide-react';
 import { FOOTER_LINKS, FOOTER_ADDRESS, SOCIAL_LINKS } from '@/config';
+import { AccessibilityButtons } from '@/components/AccessibilityButtons';
 import { cn } from '@/lib/utils';
 
 const SOCIAL_ICON_MAP: Record<string, LucideIcon> = {
@@ -18,7 +19,8 @@ export function Footer() {
     >
       <div className="mx-auto max-w-page px-4 py-8 sm:px-6 lg:px-8">
         <div className="flex flex-col gap-6 sm:flex-row sm:items-center sm:justify-between">
-          <nav aria-label="Links do rodapé">
+          <nav aria-label="Links do rodapé" className="flex flex-wrap items-center gap-x-6 gap-y-2">
+            <AccessibilityButtons variant="footer" />
             <ul className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
               {FOOTER_LINKS.map((link) => (
                 <li key={link.path + link.label}>
