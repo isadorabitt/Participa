@@ -2,9 +2,9 @@
 
 ## 📋 Sobre o Projeto
 
-**Participa DF** é uma solução digital inovadora e acessível desenvolvida para o **1º Hackathon em Controle Social: Desafio Participa DF**, promovido pela Controladoria-Geral do Distrito Federal (CGDF).
+**Participa DF** é uma solução digital inovadora e acessível desenvolvida para o **1º Hackathon em Controle Social: Desafio Participa DF**, promovido pela Controladoria-Geral do Distrito Federal (CGDF), conforme **Edital N° 10, de 24 de novembro de 2025**.
 
-Este projeto foi desenvolvido para a **Categoria II: Ouvidoria**, criando uma plataforma completa que permite o registro de manifestações por texto, áudio, imagem e vídeo, com emissão automática de protocolo, opção de anonimato e acessibilidade plena conforme as diretrizes WCAG 2.1.
+Este projeto foi desenvolvido para a **Categoria II: Ouvidoria**, criando uma PWA que permite o registro de manifestações por texto, áudio, imagem e vídeo, com emissão automática de protocolo, opção de anonimato e acessibilidade plena conforme WCAG 2.1 AA, com integração ao conceito IZA da Ouvidoria-Geral do DF.
 
 ### 🎯 Objetivo do Hackathon
 
@@ -466,9 +466,11 @@ O sistema classifica automaticamente o tipo de manifestação:
 
 ## 📚 Documentação Adicional
 
-### Vídeo de Demonstração
+### Vídeo de Demonstração (obrigatório para submissão – Edital item 8.2.2)
 
-O link para o vídeo de demonstração está disponível no README.md do repositório.
+O edital exige vídeo de **até 7 minutos** demonstrando: fluxo completo de manifestação, uso de múltiplos canais (texto, áudio, imagem, vídeo) e recursos de acessibilidade. O vídeo deve estar hospedado em plataforma pública (ex.: YouTube não listado, Vimeo).
+
+**Link do vídeo**: [inserir URL aqui antes da submissão]
 
 ### Estrutura de Dados
 

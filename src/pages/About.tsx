@@ -1,367 +1,138 @@
-import {
-  Box,
-  Typography,
-  Container,
-  Paper,
-  Accordion,
-  AccordionSummary,
-  AccordionDetails,
-  Alert,
-} from '@mui/material';
-import {
-  ExpandMore as ExpandMoreIcon,
-  Info as InfoIcon,
-  Security as SecurityIcon,
-  AccessTime as AccessTimeIcon,
-} from '@mui/icons-material';
 import { useAccessibility } from '../context/AccessibilityContext';
+import { Card, CardContent } from '../components/ui/card';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { PageLayout, PageHeader } from '../components/PageLayout';
+import { Info, Shield, Clock, ChevronDown } from 'lucide-react';
+import { cn } from '@/lib/utils';
+
+const MANIFESTATION_TYPES = [
+  {
+    id: 'reclamacao',
+    title: 'Reclamação',
+    content:
+      'Manifestação sobre insatisfação com serviço prestado, atendimento recebido ou situação vivenciada. A reclamação é analisada e encaminhada ao setor responsável para apuração e resposta.',
+  },
+  {
+    id: 'sugestao',
+    title: 'Sugestão',
+    content:
+      'Proposta de melhoria para serviços, processos ou políticas. Suas sugestões são analisadas e podem ser implementadas para aprimorar os serviços oferecidos.',
+  },
+  {
+    id: 'elogio',
+    title: 'Elogio',
+    content:
+      'Reconhecimento positivo sobre serviço prestado ou atendimento recebido. Os elogios são compartilhados com as equipes responsáveis e contribuem para a valorização do trabalho realizado.',
+  },
+  {
+    id: 'denuncia',
+    title: 'Denúncia',
+    content:
+      'Comunicação sobre irregularidade, ilegalidade ou conduta inadequada. As denúncias são tratadas com sigilo e encaminhadas aos órgãos competentes para apuração.',
+  },
+  {
+    id: 'solicitacao',
+    title: 'Solicitação de Informação',
+    content:
+      'Pedido de informações sobre serviços, processos ou políticas. As solicitações são respondidas de acordo com a Lei de Acesso à Informação.',
+  },
+] as const;
 
 export const About = () => {
   const { fontSize, highContrast } = useAccessibility();
+  const textStyle = { fontSize: `${fontSize}px`, lineHeight: 1.8 } as React.CSSProperties;
+  const headingStyle = { fontSize: `calc(${fontSize}px * 1.5)` } as React.CSSProperties;
 
   return (
-    <Container maxWidth="lg" sx={{ paddingY: 4 }}>
-      <Box sx={{ marginBottom: 4 }}>
-        <Typography
-          variant="h3"
-          component="h1"
-          gutterBottom
-          sx={{ fontSize: `calc(${fontSize}px * 2)` }}
-        >
-          O que é Ouvidoria
-        </Typography>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          sx={{ fontSize: `${fontSize}px` }}
-        >
-          Entenda o papel da ouvidoria e como ela pode ajudá-lo
-        </Typography>
-      </Box>
+    <PageLayout maxWidth="page" padding="md">
+      <PageHeader
+        title="O que é Ouvidoria"
+        description="Entenda o papel da ouvidoria e como ela pode ajudá-lo"
+      />
 
-      <Paper
-        elevation={2}
-        sx={{
-          padding: 4,
-          marginBottom: 4,
-          backgroundColor: highContrast ? '#000' : 'background.paper',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, marginBottom: 3 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 56,
-              height: 56,
-              borderRadius: '14px',
-              background: 'linear-gradient(135deg, #005FDB15 0%, #005FDB08 100%)',
-              border: '2px solid #005FDB20',
-              flexShrink: 0,
-            }}
-          >
-            <InfoIcon color="primary" sx={{ fontSize: 32 }} />
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              variant="h5"
-              component="h2"
-              gutterBottom
-              sx={{ fontSize: `calc(${fontSize}px * 1.5)` }}
-            >
+      <Card className={cn('mb-6', highContrast && 'border-white bg-black')}>
+        <CardContent className="flex gap-4 pt-6">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-border bg-muted">
+            <Info className="h-8 w-8 text-participa-blue" aria-hidden />
+          </div>
+          <div className="flex-1">
+            <h2 className="mb-2 font-semibold" style={headingStyle}>
               Definição
-            </Typography>
-            <Typography
-              variant="body1"
-              paragraph
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              A ouvidoria é um canal de comunicação entre o cidadão e a instituição, 
-              criado para receber, analisar e encaminhar manifestações da sociedade. 
-              É um instrumento democrático que permite a participação cidadã na gestão pública 
-              e na melhoria dos serviços oferecidos.
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Através da ouvidoria, você pode registrar reclamações, sugestões, elogios, 
-              denúncias e solicitações de informação, contribuindo para a transparência e 
-              o controle social.
-            </Typography>
-          </Box>
-        </Box>
-      </Paper>
+            </h2>
+            <p className="mb-4" style={textStyle}>
+              A ouvidoria é um canal de comunicação entre o cidadão e a instituição, criado para receber, analisar e encaminhar manifestações da sociedade. É um instrumento democrático que permite a participação cidadã na gestão pública e na melhoria dos serviços oferecidos.
+            </p>
+            <p style={textStyle}>
+              Através da ouvidoria, você pode registrar reclamações, sugestões, elogios, denúncias e solicitações de informação, contribuindo para a transparência e o controle social.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-      <Box sx={{ marginBottom: 4 }}>
-        <Typography
-          variant="h5"
-          component="h2"
-          gutterBottom
-          sx={{ fontSize: `calc(${fontSize}px * 1.5)`, marginBottom: 3 }}
-        >
+      <div className="mb-8">
+        <h2 className="mb-6 font-semibold" style={headingStyle}>
           Tipos de Manifestação
-        </Typography>
+        </h2>
+        <div className="space-y-2">
+          {MANIFESTATION_TYPES.map((item) => (
+            <details key={item.id} className="group rounded-lg border border-border bg-card">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-2 px-4 py-3 font-semibold focus-visible:outline focus-visible:ring-2 focus-visible:ring-ring [&::-webkit-details-marker]:hidden">
+                <span style={{ fontSize: `calc(${fontSize}px * 1.2)` }}>{item.title}</span>
+                <ChevronDown className="h-5 w-5 shrink-0 transition-transform group-open:rotate-180" aria-hidden />
+              </summary>
+              <div className="border-t border-border px-4 py-3">
+                <p style={textStyle}>{item.content}</p>
+              </div>
+            </details>
+          ))}
+        </div>
+      </div>
 
-        <Accordion sx={{ marginBottom: 2 }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="reclamacao-content"
-            id="reclamacao-header"
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontSize: `calc(${fontSize}px * 1.2)` }}
-            >
-              Reclamação
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography
-              variant="body1"
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Manifestação sobre insatisfação com serviço prestado, atendimento recebido 
-              ou situação vivenciada. A reclamação é analisada e encaminhada ao setor responsável 
-              para apuração e resposta.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion sx={{ marginBottom: 2 }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="sugestao-content"
-            id="sugestao-header"
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontSize: `calc(${fontSize}px * 1.2)` }}
-            >
-              Sugestão
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography
-              variant="body1"
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Proposta de melhoria para serviços, processos ou políticas. Suas sugestões 
-              são analisadas e podem ser implementadas para aprimorar os serviços oferecidos.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion sx={{ marginBottom: 2 }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="elogio-content"
-            id="elogio-header"
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontSize: `calc(${fontSize}px * 1.2)` }}
-            >
-              Elogio
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography
-              variant="body1"
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Reconhecimento positivo sobre serviço prestado ou atendimento recebido. 
-              Os elogios são compartilhados com as equipes responsáveis e contribuem para 
-              a valorização do trabalho realizado.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion sx={{ marginBottom: 2 }}>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="denuncia-content"
-            id="denuncia-header"
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontSize: `calc(${fontSize}px * 1.2)` }}
-            >
-              Denúncia
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography
-              variant="body1"
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Comunicação sobre irregularidade, ilegalidade ou conduta inadequada. 
-              As denúncias são tratadas com sigilo e encaminhadas aos órgãos competentes 
-              para apuração.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-
-        <Accordion>
-          <AccordionSummary
-            expandIcon={<ExpandMoreIcon />}
-            aria-controls="solicitacao-content"
-            id="solicitacao-header"
-          >
-            <Typography
-              variant="h6"
-              sx={{ fontSize: `calc(${fontSize}px * 1.2)` }}
-            >
-              Solicitação de Informação
-            </Typography>
-          </AccordionSummary>
-          <AccordionDetails>
-            <Typography
-              variant="body1"
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Pedido de informações sobre serviços, processos ou políticas. 
-              As solicitações são respondidas de acordo com a Lei de Acesso à Informação.
-            </Typography>
-          </AccordionDetails>
-        </Accordion>
-      </Box>
-
-      <Paper
-        elevation={2}
-        sx={{
-          padding: 4,
-          marginBottom: 4,
-          backgroundColor: highContrast ? '#000' : 'background.paper',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2, marginBottom: 3 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 56,
-              height: 56,
-              borderRadius: '14px',
-              background: 'linear-gradient(135deg, #005FDB15 0%, #005FDB08 100%)',
-              border: '2px solid #005FDB20',
-              flexShrink: 0,
-            }}
-          >
-            <SecurityIcon color="primary" sx={{ fontSize: 32 }} />
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              variant="h5"
-              component="h2"
-              gutterBottom
-              sx={{ fontSize: `calc(${fontSize}px * 1.5)` }}
-            >
+      <Card className={cn('mb-6', highContrast && 'border-white bg-black')}>
+        <CardContent className="flex gap-4 pt-6">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-border bg-muted">
+            <Shield className="h-8 w-8 text-participa-blue" aria-hidden />
+          </div>
+          <div className="flex-1">
+            <h2 className="mb-2 font-semibold" style={headingStyle}>
               Sigilo e Confidencialidade
-            </Typography>
-            <Typography
-              variant="body1"
-              paragraph
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Todas as manifestações são tratadas com absoluto sigilo e confidencialidade. 
-              Seus dados pessoais são protegidos conforme a legislação vigente sobre proteção 
-              de dados pessoais.
-            </Typography>
-            <Typography
-              variant="body1"
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Você pode fazer registros de forma anônima ou identificada, conforme sua preferência. 
-              Em ambos os casos, seu registro será processado e você receberá um protocolo 
-              para acompanhamento.
-            </Typography>
-          </Box>
-        </Box>
-      </Paper>
+            </h2>
+            <p className="mb-4" style={textStyle}>
+              Todas as manifestações são tratadas com absoluto sigilo e confidencialidade. Seus dados pessoais são protegidos conforme a legislação vigente sobre proteção de dados pessoais.
+            </p>
+            <p style={textStyle}>
+              Você pode fazer registros de forma anônima ou identificada, conforme sua preferência. Em ambos os casos, seu registro será processado e você receberá um protocolo para acompanhamento.
+            </p>
+          </div>
+        </CardContent>
+      </Card>
 
-      <Paper
-        elevation={2}
-        sx={{
-          padding: 4,
-          marginBottom: 4,
-          backgroundColor: highContrast ? '#000' : 'background.paper',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 56,
-              height: 56,
-              borderRadius: '14px',
-              background: 'linear-gradient(135deg, #005FDB15 0%, #005FDB08 100%)',
-              border: '2px solid #005FDB20',
-              flexShrink: 0,
-            }}
-          >
-            <AccessTimeIcon color="primary" sx={{ fontSize: 32 }} />
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              variant="h5"
-              component="h2"
-              gutterBottom
-              sx={{ fontSize: `calc(${fontSize}px * 1.5)` }}
-            >
+      <Card className={cn('mb-6', highContrast && 'border-white bg-black')}>
+        <CardContent className="flex gap-4 pt-6">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-border bg-muted">
+            <Clock className="h-8 w-8 text-participa-blue" aria-hidden />
+          </div>
+          <div className="flex-1">
+            <h2 className="mb-2 font-semibold" style={headingStyle}>
               Prazos de Resposta
-            </Typography>
-            <Typography
-              variant="body1"
-              paragraph
-              sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-            >
-              Os registros são analisados e respondidos dentro dos prazos estabelecidos pela 
-              legislação. Você pode acompanhar o andamento do seu registro através do protocolo 
-              recebido.
-            </Typography>
-            <Box component="ul" sx={{ paddingLeft: 3, marginTop: 2 }}>
-              <li>
-                <Typography
-                  variant="body1"
-                  sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-                >
-                  <strong>Reclamações e Denúncias:</strong> Até 30 dias (podendo ser prorrogado por mais 30 dias)
-                </Typography>
-              </li>
-              <li>
-                <Typography
-                  variant="body1"
-                  sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-                >
-                  <strong>Solicitações de Informação:</strong> Até 20 dias (podendo ser prorrogado por mais 10 dias)
-                </Typography>
-              </li>
-              <li>
-                <Typography
-                  variant="body1"
-                  sx={{ fontSize: `${fontSize}px`, lineHeight: 1.8 }}
-                >
-                  <strong>Sugestões e Elogios:</strong> Análise e encaminhamento conforme disponibilidade
-                </Typography>
-              </li>
-            </Box>
-          </Box>
-        </Box>
-      </Paper>
+            </h2>
+            <p className="mb-4" style={textStyle}>
+              Os registros são analisados e respondidos dentro dos prazos estabelecidos pela legislação. Você pode acompanhar o andamento do seu registro através do protocolo recebido.
+            </p>
+            <ul className="list-inside list-disc space-y-2 pl-2" style={textStyle}>
+              <li><strong>Reclamações e Denúncias:</strong> Até 30 dias (podendo ser prorrogado por mais 30 dias)</li>
+              <li><strong>Solicitações de Informação:</strong> Até 20 dias (podendo ser prorrogado por mais 10 dias)</li>
+              <li><strong>Sugestões e Elogios:</strong> Análise e encaminhamento conforme disponibilidade</li>
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
 
-      <Alert severity="info" role="note" sx={{ fontSize: `${fontSize}px` }}>
-        <Typography variant="body2" sx={{ fontSize: `${fontSize}px` }}>
-          <strong>Importante:</strong> A ouvidoria é um canal de participação cidadã. 
-          Use este espaço para contribuir com a melhoria dos serviços e a transparência 
-          da gestão pública.
-        </Typography>
+      <Alert variant="info" role="note">
+        <AlertDescription style={textStyle}>
+          <strong>Importante:</strong> A ouvidoria é um canal de participação cidadã. Use este espaço para contribuir com a melhoria dos serviços e a transparência da gestão pública.
+        </AlertDescription>
       </Alert>
-    </Container>
+    </PageLayout>
   );
 };
-

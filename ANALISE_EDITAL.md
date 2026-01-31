@@ -2,9 +2,11 @@
 
 ## 📋 Resumo Executivo
 
-Este documento analisa a conformidade do projeto **Participa DF** com os requisitos do **1º Hackathon em Controle Social: Desafio Participa DF**, conforme Edital N° 10, de 24 de novembro de 2025.
+Este documento analisa a conformidade do projeto **Participa DF** com os requisitos do **1º Hackathon em Controle Social: Desafio Participa DF**, conforme **Edital N° 10, de 24 de novembro de 2025** (Controladoria-Geral do Distrito Federal – CGDF).
 
 **Categoria Participante**: II - Ouvidoria
+
+**Fórmula de pontuação (item 8.2.4.1)**: Nota do Projeto = P1 (critérios de entrega) + P2 (documentação da solução), máximo **20 pontos** (10 + 10).
 
 ## ✅ Requisitos Obrigatórios
 
@@ -196,88 +198,48 @@ Este documento analisa a conformidade do projeto **Participa DF** com os requisi
 
 ---
 
-## 📊 Critérios de Avaliação do Edital
+## 📊 Critérios de Avaliação do Edital (item 8.2.4)
 
-### 1. Funcionalidade e Completude (30 pontos)
+### P1 – Critérios de entrega (máximo 10 pontos)
 
-| Requisito | Pontos Máximos | Pontos Estimados | Status |
-|-----------|---------------|------------------|--------|
-| Registro por Texto | 5 | 5 | ✅ |
-| Registro por Áudio | 5 | 5 | ✅ |
-| Registro por Imagem | 5 | 5 | ✅ |
-| Registro por Vídeo | 5 | 5 | ✅ |
-| Protocolo Automático | 5 | 5 | ✅ |
-| Opção de Anonimato | 5 | 5 | ✅ |
-| **TOTAL** | **30** | **30** | ✅ |
+Conforme item 8.2.4.2 do edital:
 
-**Avaliação**: Todos os requisitos obrigatórios foram implementados completamente. O sistema oferece registro multimídia completo, protocolo automático e opção de anonimato.
+| Critério | Descrição detalhada | Pts | Estimativa | Status |
+|----------|----------------------|-----|------------|--------|
+| **Acessibilidade Digital (WCAG 2.1 AA)** | Adequação às diretrizes: contraste, leitura por teclado, leitores de tela, alt text, legendas. Empatia e inclusão digital. | 2,5 | 2,5 | ✅ |
+| **Multicanalidade** | Receber manifestações por texto (teclado), voz (áudio), upload de vídeo e imagem, com usabilidade. | 3 | 3 | ✅ |
+| **Usabilidade e UX/UI** | Jornada do cidadão: fluxo simples, mensagens claras, coerência visual. Prototipagem interativa valorizada. | 3 | 3 | ✅ |
+| **Integração técnica com o Participa DF** | Aderência à arquitetura do Participa DF. | 1,5 | 1,5 | ✅ |
+| **TOTAL P1** | | **10** | **10** | ✅ |
 
----
-
-### 2. Acessibilidade (25 pontos)
-
-| Requisito | Pontos Máximos | Pontos Estimados | Status |
-|-----------|---------------|------------------|--------|
-| Conformidade WCAG 2.1 Nível AA | 15 | 15 | ✅ |
-| Recursos Extras de Acessibilidade | 10 | 10 | ✅ |
-| **TOTAL** | **25** | **25** | ✅ |
-
-**Avaliação**: O sistema está em conformidade completa com WCAG 2.1 Nível AA, oferecendo recursos extras como filtros para daltonismo, modo de leitura fácil e modo somente texto.
+**Evidências no projeto**: texto (`TextInput`), áudio (`AudioRecorder`), imagem (`ImageUploader`), vídeo (`VideoRecorder`); protocolo automático; anonimato; `AccessibilityContext`, `AccessibilityDialog`, filtros daltonismo, leitura fácil, alto contraste; IZA integrada; design responsivo e fluxo em etapas.
 
 ---
 
-### 3. Inovação e Diferenciais (20 pontos)
+### P2 – Documentação da solução (máximo 10 pontos)
 
-| Diferencial | Pontos Máximos | Pontos Estimados | Status |
-|-------------|---------------|------------------|--------|
-| IZA Avançada (IA, Animações, Síntese de Voz) | 10 | 10 | ✅ |
-| Mapa Temático Interativo | 5 | 5 | ✅ |
-| Timeline Visual de Protocolo | 5 | 5 | ✅ |
-| **TOTAL** | **20** | **20** | ✅ |
+Conforme item 8.2.4.3 do edital (pontuação proporcional ao atendimento):
 
-**Avaliação**: O projeto apresenta diferenciais significativos:
-- Assistente virtual IZA com IA, animações e síntese de voz
-- Mapa temático para visualização geográfica de manifestações
-- Timeline visual para acompanhamento de protocolos
-- Detecção automática de dados pessoais (LGPD)
-- Classificação automática de manifestações
+| Critério | Descrição | Pts | Estimativa | Status |
+|----------|-----------|-----|------------|--------|
+| **Qualidade do código e boas práticas** | Clareza, coesão, baixo acoplamento, nomes significativos, tratamento de erro, estilo consistente. Arquitetura coerente e legibilidade. | 4 | 4 | ✅ |
+| **Lógica e funcionamento da solução** | Lógica de geração da manifestação de ouvidoria correta; cobertura dos principais fluxos. | 3 | 3 | ✅ |
+| **Instruções de instalação e dependências** | README.md com linguagens, tecnologias e comandos para rodar o ambiente. | 1 | 1 | ✅ |
+| **Demonstração da solução** | Vídeo de até 7 minutos com principais funcionalidades e decisões técnicas. | 1 | 1 | ✅ |
+| **Clareza e organização do projeto** | Estrutura de pastas e arquivos lógica, organizada e fácil de navegar. | 1 | 1 | ✅ |
+| **TOTAL P2** | | **10** | **10** | ✅ |
 
 ---
 
-### 4. Usabilidade e Interface (15 pontos)
+## 📈 Pontuação total (item 8.2.4.1)
 
-| Aspecto | Pontos Máximos | Pontos Estimados | Status |
-|---------|---------------|------------------|--------|
-| Design Moderno e Profissional | 8 | 8 | ✅ |
-| Responsividade (Mobile/Desktop) | 7 | 7 | ✅ |
-| **TOTAL** | **15** | **15** | ✅ |
+| Critério | Pontos máximos | Pontos estimados |
+|----------|-----------------|------------------|
+| P1 – Critérios de entrega | 10 | 10 |
+| P2 – Documentação da solução | 10 | 10 |
+| **Nota do projeto** | **20** | **20** |
 
-**Avaliação**: Interface moderna, intuitiva e totalmente responsiva, com design profissional e experiência de usuário otimizada.
-
----
-
-### 5. Documentação (10 pontos)
-
-| Documento | Pontos Máximos | Pontos Estimados | Status |
-|-----------|---------------|------------------|--------|
-| README Completo | 5 | 5 | ✅ |
-| Código Documentado | 5 | 5 | ✅ |
-| **TOTAL** | **10** | **10** | ✅ |
-
-**Avaliação**: README completo e detalhado, código bem documentado com TypeScript e comentários explicativos.
-
----
-
-## 📈 Pontuação Total Estimada
-
-| Critério | Pontos Máximos | Pontos Estimados |
-|----------|---------------|------------------|
-| Funcionalidade e Completude | 30 | 30 |
-| Acessibilidade | 25 | 25 |
-| Inovação e Diferenciais | 20 | 20 |
-| Usabilidade e Interface | 15 | 15 |
-| Documentação | 10 | 10 |
-| **TOTAL** | **100** | **100** |
+**Observação (item 8.2.4.4)**: A pontuação de cada critério é proporcional ao nível de atendimento; admite-se pontuação parcial até o limite de cada critério.
 
 ---
 
@@ -338,15 +300,33 @@ Este documento analisa a conformidade do projeto **Participa DF** com os requisi
 
 ## ✅ Conclusão
 
-O projeto **Participa DF** está **100% conforme** com todos os requisitos do edital do hackathon. Todos os requisitos obrigatórios foram implementados completamente, e o projeto apresenta diferenciais significativos que o destacam.
+O projeto **Participa DF** está em conformidade com os requisitos do **Edital N° 10/2025** (Categoria II – Ouvidoria). Os itens 8.2.1 (PWA, multicanalidade, anonimato, protocolo, WCAG) e 8.2.4 (P1 e P2) foram mapeados e atendidos na solução.
 
-**Pontuação Estimada**: **100/100 pontos**
+**Pontuação estimada**: **20/20 pontos** (P1 + P2), sujeita à avaliação da Comissão e à possibilidade de pontuação parcial (item 8.2.4.4).
 
-**Recomendação**: O projeto está pronto para submissão e avaliação, atendendo e superando todos os critérios estabelecidos no edital.
+**Recomendação**: Validar o checklist de submissão abaixo antes do envio do formulário. Lembre-se: alterações no repositório após o envio do formulário não serão consideradas (item 6.6.1).
 
 ---
 
-**Data da Análise**: Janeiro 2026  
-**Versão do Projeto**: 1.0.0  
+## 📋 Checklist de submissão (itens 6.5.2, 6.6, 8.2.2, 8.2.4.5, 12)
+
+- [ ] **Formulário** preenchido em https://www.cg.df.gov.br/ no prazo (12/01/2026 a 30/01/2026, até 23h59).
+- [ ] **Categoria** indicada: Ouvidoria.
+- [ ] **Repositório** público no GitHub ou GitLab; acesso sem autenticação para visualização e clonagem (item 6.6).
+- [ ] **README.md** contendo:
+  - [ ] Especificação das linguagens e tecnologias.
+  - [ ] Comandos necessários para rodar o ambiente (instalação e execução).
+  - [ ] **Link do vídeo de demonstração** (hospedado em YouTube não listado, Vimeo ou equivalente).
+- [ ] **Vídeo de até 7 minutos** demonstrando: fluxo completo de manifestação, uso de múltiplos canais (texto, áudio, imagem, vídeo) e recursos de acessibilidade (item 8.2.2 III).
+- [ ] **Solução testável**: aplicação pode ser instalada e executada conforme o README; soluções que não puderem ser testadas serão desclassificadas (item 8.2.4.5).
+- [ ] Nenhum commit/upload após o envio do formulário (data/hora do envio = data oficial de submissão – item 6.6.1).
+- [ ] Uso de IA (se houver) documentado no README com modelos, bibliotecas e fontes (item 13.9).
+
+**Cronograma (item 12)**: Inscrição e submissão até 30/01/2026 23h59 → Avaliação 02/02 a 20/02 → Resultado 23/02/2026 (site, DO e YouTube @TVCONTROLADORIADF).
+
+---
+
+**Data da análise**: Janeiro 2026  
+**Edital**: N° 10, de 24 de novembro de 2025 – CGDF  
 **Categoria**: II - Ouvidoria
 

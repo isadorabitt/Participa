@@ -1,34 +1,17 @@
-import {
-  Box,
-  Typography,
-  Container,
-  Paper,
-  Stepper,
-  Step,
-  StepLabel,
-  StepContent,
-  Alert,
-  List,
-  ListItem,
-  ListItemIcon,
-  ListItemText,
-} from '@mui/material';
-import {
-  Description as DescriptionIcon,
-  LocationOn as LocationOnIcon,
-  Person as PersonIcon,
-  Preview as PreviewIcon,
-  Assignment as AssignmentIcon,
-  CheckCircle as CheckCircleIcon,
-} from '@mui/icons-material';
 import { useState } from 'react';
 import { useAccessibility } from '../context/AccessibilityContext';
+import { Card, CardContent } from '../components/ui/card';
+import { Alert, AlertDescription } from '../components/ui/alert';
+import { Button } from '../components/ui/button';
+import { PageLayout, PageHeader } from '../components/PageLayout';
+import { FileText, MapPin, User, Eye, ClipboardList, CheckCircle2, ChevronDown, ChevronUp } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
-const steps = [
+const STEPS = [
   {
     label: 'Descreva o Fato',
     description: 'Forneça uma descrição detalhada e objetiva',
-    icon: <DescriptionIcon />,
+    icon: FileText,
     content: [
       'Seja claro e objetivo na descrição do fato ocorrido',
       'Informe data, horário e local quando possível',
@@ -40,7 +23,7 @@ const steps = [
   {
     label: 'Adicione Anexos (Opcional)',
     description: 'Enriqueça seu registro com mídias',
-    icon: <LocationOnIcon />,
+    icon: MapPin,
     content: [
       'Você pode adicionar áudio, imagem ou vídeo como anexos',
       'Áudio: útil para descrever verbalmente o ocorrido',
@@ -52,7 +35,7 @@ const steps = [
   {
     label: 'Informe a Localização (Opcional)',
     description: 'Ajude a identificar o local exato',
-    icon: <LocationOnIcon />,
+    icon: MapPin,
     content: [
       'A localização ajuda a identificar onde o fato ocorreu',
       'Você pode usar sua localização atual ou inserir manualmente',
@@ -62,7 +45,7 @@ const steps = [
   {
     label: 'Escolha a Identificação',
     description: 'Anônimo ou identificado',
-    icon: <PersonIcon />,
+    icon: User,
     content: [
       'Registro Anônimo: nenhuma informação pessoal é coletada',
       'Registro Identificado: você fornece dados para contato',
@@ -73,7 +56,7 @@ const steps = [
   {
     label: 'Revise e Finalize',
     description: 'Confira todas as informações antes de enviar',
-    icon: <PreviewIcon />,
+    icon: Eye,
     content: [
       'Revise a descrição e verifique se está completa',
       'Confirme os anexos adicionados',
@@ -82,269 +65,99 @@ const steps = [
       'Após finalizar, você receberá um protocolo único',
     ],
   },
+] as const;
+
+const GOOD_PRACTICES = [
+  'Seja objetivo e direto na descrição',
+  'Mantenha o respeito e a educação em todas as manifestações',
+  'Forneça informações verdadeiras e precisas',
+  'Guarde o protocolo recebido para acompanhamento',
+  'Evite incluir dados pessoais sensíveis na descrição',
 ];
 
 export const Guidelines = () => {
   const { fontSize, highContrast } = useAccessibility();
   const [activeStep, setActiveStep] = useState(0);
+  const textStyle = { fontSize: `${fontSize}px`, lineHeight: 1.8 } as React.CSSProperties;
 
   return (
-    <Container maxWidth="lg" sx={{ paddingY: 4 }}>
-      <Box sx={{ marginBottom: 4 }}>
-        <Typography
-          variant="h3"
-          component="h1"
-          gutterBottom
-          sx={{ fontSize: `calc(${fontSize}px * 2)` }}
-        >
-          Orientações para Relatar
-        </Typography>
-        <Typography
-          variant="body1"
-          color="text.secondary"
-          sx={{ fontSize: `${fontSize}px` }}
-        >
-          Siga estas orientações para criar um registro completo e eficaz
-        </Typography>
-      </Box>
+    <PageLayout maxWidth="page" padding="md">
+      <PageHeader
+        title="Orientações para Relatar"
+        description="Siga estas orientações para criar um registro completo e eficaz"
+      />
 
-      <Alert severity="info" sx={{ marginBottom: 4, fontSize: `${fontSize}px` }} role="note">
-        <Typography variant="body2" sx={{ fontSize: `${fontSize}px` }}>
-          <strong>Dica:</strong> Quanto mais detalhado e completo for seu registro, 
-          melhor será o atendimento e mais rápida será a resposta.
-        </Typography>
+      <Alert variant="info" className="mb-8 border border-border" role="note">
+        <AlertDescription style={textStyle}>
+          <strong>Dica:</strong> Quanto mais detalhado e completo for seu registro, melhor será o atendimento e mais rápida será a resposta.
+        </AlertDescription>
       </Alert>
 
-      <Paper
-        elevation={2}
-        sx={{
-          padding: 4,
-          marginBottom: 4,
-          backgroundColor: highContrast ? '#000' : 'background.paper',
-        }}
-      >
-        <Stepper activeStep={activeStep} orientation="vertical">
-          {steps.map((step, index) => (
-            <Step key={step.label}>
-              <StepLabel
-                onClick={() => setActiveStep(index)}
-                sx={{
-                  cursor: 'pointer',
-                  '& .MuiStepLabel-label': {
-                    fontSize: `calc(${fontSize}px * 1.2)`,
-                  },
-                }}
-                icon={step.icon}
-              >
-                <Typography
-                  variant="h6"
-                  sx={{ fontSize: `calc(${fontSize}px * 1.2)` }}
-                >
-                  {step.label}
-                </Typography>
-                <Typography
-                  variant="body2"
-                  color="text.secondary"
-                  sx={{ fontSize: `${fontSize}px` }}
-                >
-                  {step.description}
-                </Typography>
-              </StepLabel>
-              <StepContent>
-                <List>
-                  {step.content.map((item, itemIndex) => (
-                    <ListItem key={itemIndex} sx={{ paddingLeft: 0 }}>
-                      <ListItemIcon>
-                        <Box
-                          sx={{
-                            display: 'flex',
-                            alignItems: 'center',
-                            justifyContent: 'center',
-                            width: 32,
-                            height: 32,
-                            borderRadius: '50%',
-                            backgroundColor: '#005FDB15',
-                          }}
-                        >
-                          <CheckCircleIcon color="primary" sx={{ fontSize: 20 }} />
-                        </Box>
-                      </ListItemIcon>
-                      <ListItemText
-                        primary={item}
-                        primaryTypographyProps={{
-                          sx: { fontSize: `${fontSize}px`, lineHeight: 1.8 },
-                        }}
-                      />
-                    </ListItem>
-                  ))}
-                </List>
-              </StepContent>
-            </Step>
-          ))}
-        </Stepper>
-      </Paper>
+      <Card className={cn('mb-6', highContrast && 'border-white bg-black')}>
+        <CardContent className="pt-6">
+          <div className="space-y-4">
+            {STEPS.map((step, index) => {
+              const Icon = step.icon;
+              const isActive = activeStep === index;
+              return (
+                <div key={step.label} className="border-b border-border pb-4 last:border-0 last:pb-0">
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-between px-0 font-semibold hover:bg-transparent"
+                    style={{ fontSize: `calc(${fontSize}px * 1.2)` }}
+                    onClick={() => setActiveStep(isActive ? -1 : index)}
+                    aria-expanded={isActive}
+                  >
+                    <span className="flex items-center gap-2">
+                      <Icon className="h-5 w-5 text-participa-blue" aria-hidden />
+                      {step.label}
+                    </span>
+                    {isActive ? <ChevronUp className="h-5 w-5" /> : <ChevronDown className="h-5 w-5" />}
+                  </Button>
+                  <p className="mb-2 pl-7 text-sm text-muted-foreground">{step.description}</p>
+                  {isActive && (
+                    <ul className="space-y-2 pl-7">
+                      {step.content.map((item, i) => (
+                        <li key={`${step.label}-${i}`} className="flex items-start gap-2" style={textStyle}>
+                          <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-participa-blue" aria-hidden />
+                          <span>{item}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              );
+            })}
+          </div>
+        </CardContent>
+      </Card>
 
-      <Paper
-        elevation={2}
-        sx={{
-          padding: 4,
-          marginBottom: 4,
-          backgroundColor: highContrast ? '#000' : 'background.paper',
-        }}
-      >
-        <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              width: 56,
-              height: 56,
-              borderRadius: '14px',
-              background: 'linear-gradient(135deg, #005FDB15 0%, #005FDB08 100%)',
-              border: '2px solid #005FDB20',
-              flexShrink: 0,
-            }}
-          >
-            <AssignmentIcon color="primary" sx={{ fontSize: 32 }} />
-          </Box>
-          <Box sx={{ flex: 1 }}>
-            <Typography
-              variant="h5"
-              component="h2"
-              gutterBottom
-              sx={{ fontSize: `calc(${fontSize}px * 1.5)` }}
-            >
+      <Card className={cn('mb-6', highContrast && 'border-white bg-black')}>
+        <CardContent className="flex gap-4 pt-6">
+          <div className="flex h-14 w-14 shrink-0 items-center justify-center rounded-xl border border-border bg-muted">
+            <ClipboardList className="h-8 w-8 text-participa-blue" aria-hidden />
+          </div>
+          <div className="flex-1">
+            <h2 className="mb-4 font-semibold" style={{ fontSize: `calc(${fontSize}px * 1.5)` }}>
               Boas Práticas
-            </Typography>
-            <List>
-              <ListItem>
-                <ListItemIcon>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 32,
-                      height: 32,
-                      borderRadius: '50%',
-                      backgroundColor: '#005FDB15',
-                    }}
-                  >
-                    <CheckCircleIcon color="primary" sx={{ fontSize: 20 }} />
-                  </Box>
-                </ListItemIcon>
-                <ListItemText
-                  primary="Seja objetivo e direto na descrição"
-                  primaryTypographyProps={{
-                    sx: { fontSize: `${fontSize}px`, lineHeight: 1.8 },
-                  }}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 32,
-                      height: 32,
-                      borderRadius: '50%',
-                      backgroundColor: '#005FDB15',
-                    }}
-                  >
-                    <CheckCircleIcon color="primary" sx={{ fontSize: 20 }} />
-                  </Box>
-                </ListItemIcon>
-                <ListItemText
-                  primary="Mantenha o respeito e a educação em todas as manifestações"
-                  primaryTypographyProps={{
-                    sx: { fontSize: `${fontSize}px`, lineHeight: 1.8 },
-                  }}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 32,
-                      height: 32,
-                      borderRadius: '50%',
-                      backgroundColor: '#005FDB15',
-                    }}
-                  >
-                    <CheckCircleIcon color="primary" sx={{ fontSize: 20 }} />
-                  </Box>
-                </ListItemIcon>
-                <ListItemText
-                  primary="Forneça informações verdadeiras e precisas"
-                  primaryTypographyProps={{
-                    sx: { fontSize: `${fontSize}px`, lineHeight: 1.8 },
-                  }}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 32,
-                      height: 32,
-                      borderRadius: '50%',
-                      backgroundColor: '#005FDB15',
-                    }}
-                  >
-                    <CheckCircleIcon color="primary" sx={{ fontSize: 20 }} />
-                  </Box>
-                </ListItemIcon>
-                <ListItemText
-                  primary="Guarde o protocolo recebido para acompanhamento"
-                  primaryTypographyProps={{
-                    sx: { fontSize: `${fontSize}px`, lineHeight: 1.8 },
-                  }}
-                />
-              </ListItem>
-              <ListItem>
-                <ListItemIcon>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      alignItems: 'center',
-                      justifyContent: 'center',
-                      width: 32,
-                      height: 32,
-                      borderRadius: '50%',
-                      backgroundColor: '#005FDB15',
-                    }}
-                  >
-                    <CheckCircleIcon color="primary" sx={{ fontSize: 20 }} />
-                  </Box>
-                </ListItemIcon>
-                <ListItemText
-                  primary="Evite incluir dados pessoais sensíveis na descrição"
-                  primaryTypographyProps={{
-                    sx: { fontSize: `${fontSize}px`, lineHeight: 1.8 },
-                  }}
-                />
-              </ListItem>
-            </List>
-          </Box>
-        </Box>
-      </Paper>
+            </h2>
+            <ul className="space-y-2">
+              {GOOD_PRACTICES.map((item) => (
+                <li key={item} className="flex items-start gap-2" style={textStyle}>
+                  <CheckCircle2 className="mt-0.5 h-5 w-5 shrink-0 text-participa-blue" aria-hidden />
+                  <span>{item}</span>
+                </li>
+              ))}
+            </ul>
+          </div>
+        </CardContent>
+      </Card>
 
-      <Alert severity="warning" role="alert" sx={{ fontSize: `${fontSize}px` }}>
-        <Typography variant="body2" sx={{ fontSize: `${fontSize}px` }}>
-          <strong>Atenção:</strong> Registros falsos, caluniosos ou difamatórios podem 
-          resultar em responsabilização legal. Use este canal de forma responsável e ética.
-        </Typography>
+      <Alert variant="warning" role="alert" className="border border-border">
+        <AlertDescription style={textStyle}>
+          <strong>Atenção:</strong> Registros falsos, caluniosos ou difamatórios podem resultar em responsabilização legal. Use este canal de forma responsável e ética.
+        </AlertDescription>
       </Alert>
-    </Container>
+    </PageLayout>
   );
 };
-

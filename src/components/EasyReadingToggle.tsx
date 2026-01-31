@@ -1,32 +1,26 @@
-import { Box, Typography, Switch, FormControlLabel } from '@mui/material';
-import { useAccessibility } from '../context/AccessibilityContext';
+import { useAccessibility } from '@/context/AccessibilityContext';
+import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 
-export const EasyReadingToggle = () => {
+export function EasyReadingToggle() {
   const { easyReading, toggleEasyReading } = useAccessibility();
 
   return (
-    <Box>
-      <FormControlLabel
-        control={
-          <Switch
-            checked={easyReading}
-            onChange={toggleEasyReading}
-            aria-label="Modo leitura fácil"
-          />
-        }
-        label={
-          <Box>
-            <Typography variant="subtitle1" sx={{ fontWeight: 600 }}>
-              Modo Leitura Fácil
-            </Typography>
-            <Typography variant="body2" color="text.secondary">
-              Aumenta espaçamento, fontes maiores e remove elementos complexos para facilitar a leitura.
-            </Typography>
-          </Box>
-        }
-        sx={{ margin: 0, alignItems: 'flex-start' }}
+    <div className="flex items-start gap-3">
+      <Switch
+        id="easy-reading"
+        checked={easyReading}
+        onCheckedChange={toggleEasyReading}
+        aria-label="Modo leitura fácil"
       />
-    </Box>
+      <div className="grid gap-1">
+        <Label htmlFor="easy-reading" className="text-sm font-semibold cursor-pointer">
+          Modo Leitura Fácil
+        </Label>
+        <p className="text-xs text-muted-foreground">
+          Aumenta espaçamento, fontes maiores e remove elementos complexos para facilitar a leitura.
+        </p>
+      </div>
+    </div>
   );
-};
-
+}

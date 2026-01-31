@@ -1,54 +1,60 @@
-import { Box, Typography, FormControl, RadioGroup, FormControlLabel, Radio } from '@mui/material';
-import { useAccessibility, type ColorBlindMode } from '../context/AccessibilityContext';
+import { useAccessibility, type ColorBlindMode } from '@/context/AccessibilityContext';
+import { cn } from '@/lib/utils';
 
-export const ColorBlindModeSelector = () => {
+const options: { value: ColorBlindMode; label: string; ariaLabel: string }[] = [
+  { value: 'none', label: 'Nenhum (Normal)', ariaLabel: 'Sem filtro de daltonismo' },
+  {
+    value: 'protanopia',
+    label: 'Protanopia (Ausência de cones vermelhos)',
+    ariaLabel: 'Filtro para protanopia',
+  },
+  {
+    value: 'deuteranopia',
+    label: 'Deuteranopia (Ausência de cones verdes)',
+    ariaLabel: 'Filtro para deuteranopia',
+  },
+  {
+    value: 'tritanopia',
+    label: 'Tritanopia (Ausência de cones azuis)',
+    ariaLabel: 'Filtro para tritanopia',
+  },
+];
+
+export function ColorBlindModeSelector() {
   const { colorBlindMode, setColorBlindMode } = useAccessibility();
 
-  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setColorBlindMode(event.target.value as ColorBlindMode);
-  };
-
   return (
-    <Box>
-      <Typography variant="subtitle1" sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-        Modo Daltônico
-      </Typography>
-      <Typography variant="body2" color="text.secondary" sx={{ marginBottom: 2 }}>
+    <fieldset className="space-y-3">
+      <legend className="text-sm font-semibold">Modo Daltônico</legend>
+      <p className="text-xs text-muted-foreground">
         Aplique filtros de correção de cor para diferentes tipos de daltonismo.
-      </Typography>
-      <FormControl component="fieldset" fullWidth>
-        <RadioGroup
-          value={colorBlindMode}
-          onChange={handleChange}
-          aria-label="Modo daltônico"
-        >
-          <FormControlLabel
-            value="none"
-            control={<Radio />}
-            label="Nenhum (Normal)"
-            aria-label="Sem filtro de daltonismo"
-          />
-          <FormControlLabel
-            value="protanopia"
-            control={<Radio />}
-            label="Protanopia (Ausência de cones vermelhos)"
-            aria-label="Filtro para protanopia"
-          />
-          <FormControlLabel
-            value="deuteranopia"
-            control={<Radio />}
-            label="Deuteranopia (Ausência de cones verdes)"
-            aria-label="Filtro para deuteranopia"
-          />
-          <FormControlLabel
-            value="tritanopia"
-            control={<Radio />}
-            label="Tritanopia (Ausência de cones azuis)"
-            aria-label="Filtro para tritanopia"
-          />
-        </RadioGroup>
-      </FormControl>
-    </Box>
+      </p>
+      <div
+        className="space-y-2"
+        role="radiogroup"
+        aria-label="Modo daltônico"
+      >
+        {options.map((opt) => (
+          <label
+            key={opt.value}
+            className={cn(
+              'flex cursor-pointer items-center gap-3 rounded-lg border border-border px-3 py-2 transition-colors hover:bg-muted/50',
+              colorBlindMode === opt.value && 'border-participa-blue bg-participa-blue/5'
+            )}
+          >
+            <input
+              type="radio"
+              name="colorblind"
+              value={opt.value}
+              checked={colorBlindMode === opt.value}
+              onChange={(e) => setColorBlindMode(e.target.value as ColorBlindMode)}
+              aria-label={opt.ariaLabel}
+              className="h-4 w-4 border-input text-participa-blue focus:ring-participa-blue"
+            />
+            <span className="text-sm">{opt.label}</span>
+          </label>
+        ))}
+      </div>
+    </fieldset>
   );
-};
-
+}

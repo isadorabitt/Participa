@@ -1,105 +1,73 @@
 import {
   Dialog,
-  DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
-  Box,
-  Divider,
-  Typography,
-} from '@mui/material';
-import { Close as CloseIcon } from '@mui/icons-material';
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
 import { HighContrastToggle } from './HighContrastToggle';
 import { FontSizeControl } from './FontSizeControl';
 import { ColorBlindModeSelector } from './ColorBlindModeSelector';
 import { EasyReadingToggle } from './EasyReadingToggle';
 import { TextOnlyToggle } from './TextOnlyToggle';
+import { Separator } from '@/components/ui/separator';
 
 interface AccessibilityDialogProps {
   open: boolean;
   onClose: () => void;
 }
 
-export const AccessibilityDialog = ({ open, onClose }: AccessibilityDialogProps) => {
+export function AccessibilityDialog({ open, onClose }: AccessibilityDialogProps) {
   return (
-    <Dialog
-      open={open}
-      onClose={onClose}
-      maxWidth="sm"
-      fullWidth
-      aria-labelledby="accessibility-dialog-title"
-      aria-describedby="accessibility-dialog-description"
-    >
-      <DialogTitle id="accessibility-dialog-title">
-        <Box sx={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <Typography variant="h6" component="span">
+    <Dialog open={open} onOpenChange={(v) => !v && onClose()}>
+      <DialogContent
+        className="max-w-sm sm:max-w-md"
+        showClose={true}
+        aria-labelledby="accessibility-dialog-title"
+        aria-describedby="accessibility-dialog-description"
+      >
+        <DialogHeader>
+          <DialogTitle id="accessibility-dialog-title">
             Configurações de Acessibilidade
-          </Typography>
-          <Button
-            onClick={onClose}
-            aria-label="Fechar diálogo de acessibilidade"
-            sx={{ minWidth: 'auto', padding: 1 }}
-          >
-            <CloseIcon />
-          </Button>
-        </Box>
-      </DialogTitle>
-      <DialogContent>
-        <Typography
-          id="accessibility-dialog-description"
-          variant="body2"
-          color="text.secondary"
-          sx={{ marginBottom: 3 }}
-        >
-          Personalize as configurações de acessibilidade para melhorar sua experiência de uso.
-        </Typography>
+          </DialogTitle>
+          <DialogDescription id="accessibility-dialog-description">
+            Personalize as configurações de acessibilidade para melhorar sua
+            experiência de uso.
+          </DialogDescription>
+        </DialogHeader>
 
-        <HighContrastToggle />
-        <Divider sx={{ marginY: 2 }} />
-        <FontSizeControl />
-        <Divider sx={{ marginY: 2 }} />
-        <ColorBlindModeSelector />
-        <Divider sx={{ marginY: 2 }} />
-        <EasyReadingToggle />
-        <Divider sx={{ marginY: 2 }} />
-        <TextOnlyToggle />
+        <div className="space-y-4 py-4">
+          <HighContrastToggle />
+          <Separator />
+          <FontSizeControl />
+          <Separator />
+          <ColorBlindModeSelector />
+          <Separator />
+          <EasyReadingToggle />
+          <Separator />
+          <TextOnlyToggle />
 
-        <Box sx={{ marginTop: 3, padding: 2, backgroundColor: 'action.hover', borderRadius: 1 }}>
-          <Typography variant="subtitle2" gutterBottom sx={{ fontWeight: 600 }}>
-            Atalhos de Teclado:
-          </Typography>
-          <Typography variant="body2" component="div" sx={{ marginBottom: 0.5 }}>
-            <Box component="span" sx={{ fontWeight: 'bold' }}>Alt + C</Box> - Alternar alto contraste
-          </Typography>
-          <Typography variant="body2" component="div" sx={{ marginBottom: 0.5 }}>
-            <Box component="span" sx={{ fontWeight: 'bold' }}>Alt + +</Box> - Aumentar fonte
-          </Typography>
-          <Typography variant="body2" component="div" sx={{ marginBottom: 0.5 }}>
-            <Box component="span" sx={{ fontWeight: 'bold' }}>Alt + -</Box> - Diminuir fonte
-          </Typography>
-          <Typography variant="body2" component="div" sx={{ marginBottom: 0.5 }}>
-            <Box component="span" sx={{ fontWeight: 'bold' }}>Alt + 0</Box> - Resetar fonte
-          </Typography>
-          <Typography variant="body2" component="div" sx={{ marginBottom: 0.5 }}>
-            <Box component="span" sx={{ fontWeight: 'bold' }}>Alt + N</Box> - Novo Registro
-          </Typography>
-          <Typography variant="body2" component="div" sx={{ marginBottom: 0.5 }}>
-            <Box component="span" sx={{ fontWeight: 'bold' }}>Alt + I</Box> - Início
-          </Typography>
-          <Typography variant="body2" component="div" sx={{ marginBottom: 0.5 }}>
-            <Box component="span" sx={{ fontWeight: 'bold' }}>Alt + A</Box> - Acessibilidade
-          </Typography>
-          <Typography variant="body2" component="div">
-            <Box component="span" sx={{ fontWeight: 'bold' }}>Alt + M</Box> - Menu (mobile)
-          </Typography>
-        </Box>
+          <div className="rounded-lg border border-border bg-muted/50 p-4">
+            <p className="mb-2 text-sm font-semibold">Atalhos de Teclado:</p>
+            <ul className="space-y-1 text-sm text-muted-foreground">
+              <li><strong>Alt + C</strong> – Alternar alto contraste</li>
+              <li><strong>Alt + +</strong> – Aumentar fonte</li>
+              <li><strong>Alt + -</strong> – Diminuir fonte</li>
+              <li><strong>Alt + 0</strong> – Resetar fonte</li>
+              <li><strong>Alt + N</strong> – Novo Registro</li>
+              <li><strong>Alt + I</strong> – Início</li>
+              <li><strong>Alt + A</strong> – Acessibilidade</li>
+              <li><strong>Alt + M</strong> – Menu (mobile)</li>
+            </ul>
+          </div>
+        </div>
+
+        <DialogFooter>
+          <Button onClick={onClose}>Fechar</Button>
+        </DialogFooter>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={onClose} variant="contained" autoFocus>
-          Fechar
-        </Button>
-      </DialogActions>
     </Dialog>
   );
-};
-
+}

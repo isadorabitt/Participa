@@ -1,221 +1,183 @@
+import { useLocation, Link } from 'react-router-dom';
 import {
-  Drawer,
-  List,
-  ListItem,
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-  Box,
-  Divider,
-  useMediaQuery,
-  useTheme,
-} from '@mui/material';
-import { useNavigate, useLocation } from 'react-router-dom';
-import {
-  HomeOutlined as HomeIcon,
-  AddCircleOutlined as AddCircleIcon,
-  AssignmentOutlined as AssignmentIcon,
-  InfoOutlined as InfoIcon,
-  HelpOutlineOutlined as HelpOutlineIcon,
-  QuestionAnswerOutlined as QuestionAnswerIcon,
-  AccessibilityOutlined as AccessibilityIcon,
-  MapOutlined as MapIcon,
-} from '@mui/icons-material';
+  Home,
+  PlusCircle,
+  ClipboardList,
+  Info,
+  HelpCircle,
+  MessageCircle,
+  Accessibility,
+  MapPin,
+  PanelLeftClose,
+  PanelLeftOpen,
+  type LucideIcon,
+} from 'lucide-react';
+import { SIDEBAR_NAV_ITEMS } from '@/config';
+import type { SidebarIconName } from '@/config';
+import { tokens } from '@/design-system';
+import { cn } from '@/lib/utils';
+import { Button } from '@/components/ui/button';
 
-const drawerWidth = 240;
+export const SIDEBAR_WIDTH = 240;
+export const SIDEBAR_WIDTH_COLLAPSED = 72;
 
-interface MenuItem {
-  text: string;
-  icon: React.ReactNode;
-  path: string;
-}
-
-const menuItems: MenuItem[] = [
-  { text: 'Início', icon: <HomeIcon />, path: '/' },
-  { text: 'Novo Registro', icon: <AddCircleIcon />, path: '/novo-registro' },
-  { text: 'Meus Registros', icon: <AssignmentIcon />, path: '/meus-registros' },
-  { text: 'Mapa Temático', icon: <MapIcon />, path: '/mapa' },
-  { text: 'O que é Ouvidoria', icon: <InfoIcon />, path: '/ouvidoria' },
-  { text: 'Orientações', icon: <HelpOutlineIcon />, path: '/orientacoes' },
-  { text: 'FAQ', icon: <QuestionAnswerIcon />, path: '/faq' },
-  { text: 'Acessibilidade', icon: <AccessibilityIcon />, path: '/acessibilidade' },
-];
-
-interface SidebarProps {
-  mobileOpen?: boolean;
-  onMobileClose?: () => void;
-}
-
-export const Sidebar = ({ mobileOpen = false, onMobileClose }: SidebarProps) => {
-  const navigate = useNavigate();
-  const location = useLocation();
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
-
-  const handleNavigation = (path: string) => {
-    navigate(path);
-    if (isMobile && onMobileClose) {
-      onMobileClose();
-    }
-  };
-
-  const drawerContent = (
-    <Box sx={{ overflow: 'auto', paddingTop: 3, paddingBottom: 2 }}>
-      <Box
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          paddingX: 2,
-          marginBottom: 3,
-          paddingY: 2,
-        }}
-      >
-        <Box
-          component="img"
-          src="/logo-participa-azul.svg"
-          alt="Logo Participa DF"
-          sx={{
-            height: { xs: 40, sm: 50 },
-            width: 'auto',
-            maxWidth: '85%',
-            objectFit: 'contain',
-            filter: 'drop-shadow(0px 1px 2px rgba(0, 0, 0, 0.08))',
-          }}
-        />
-      </Box>
-      <List sx={{ paddingX: 1.5 }}>
-        {menuItems.map((item) => {
-          const isSelected = location.pathname === item.path;
-          return (
-            <ListItem key={item.path} disablePadding sx={{ marginBottom: 0.5 }}>
-              <ListItemButton
-                selected={isSelected}
-                onClick={() => handleNavigation(item.path)}
-                onKeyDown={(e) => {
-                  if (e.key === 'Enter' || e.key === ' ') {
-                    e.preventDefault();
-                    handleNavigation(item.path);
-                  }
-                }}
-                sx={{
-                  borderRadius: 2,
-                  paddingY: 1.5,
-                  paddingX: 2,
-                  marginX: 1,
-                  transition: 'all 0.2s ease-in-out',
-                  position: 'relative',
-                  '&::before': isSelected
-                    ? {
-                        content: '""',
-                        position: 'absolute',
-                        left: 0,
-                        top: '50%',
-                        transform: 'translateY(-50%)',
-                        width: 4,
-                        height: '60%',
-                        backgroundColor: '#005FDB',
-                        borderRadius: '0 4px 4px 0',
-                      }
-                    : {},
-                  '&.Mui-selected': {
-                    backgroundColor: 'rgba(0, 95, 219, 0.08)',
-                    color: '#005FDB',
-                    '&:hover': {
-                      backgroundColor: 'rgba(0, 95, 219, 0.12)',
-                    },
-                    '& .MuiListItemIcon-root': {
-                      color: '#005FDB',
-                    },
-                  },
-                  '&:hover': {
-                    backgroundColor: isSelected
-                      ? 'rgba(0, 95, 219, 0.12)'
-                      : 'rgba(0, 0, 0, 0.04)',
-                    transform: 'translateX(4px)',
-                  },
-                  '&:focus-visible': {
-                    outline: '3px solid',
-                    outlineColor: '#005FDB',
-                    outlineOffset: '2px',
-                  },
-                }}
-                aria-current={isSelected ? 'page' : undefined}
-              >
-                <ListItemIcon
-                  sx={{
-                    color: isSelected ? '#005FDB' : 'rgba(0, 0, 0, 0.6)',
-                    minWidth: 40,
-                    transition: 'color 0.2s ease-in-out',
-                  }}
-                >
-                  {item.icon}
-                </ListItemIcon>
-                <ListItemText
-                  primary={item.text}
-                  primaryTypographyProps={{
-                    fontWeight: isSelected ? 600 : 400,
-                    fontSize: '0.9375rem',
-                  }}
-                  sx={{
-                    '& .MuiListItemText-primary': {
-                      transition: 'font-weight 0.2s ease-in-out',
-                    },
-                  }}
-                />
-              </ListItemButton>
-            </ListItem>
-          );
-        })}
-      </List>
-      <Divider sx={{ marginTop: 3, marginX: 2 }} />
-    </Box>
-  );
-
-  return (
-    <>
-      {isMobile ? (
-        <Drawer
-          variant="temporary"
-          open={mobileOpen}
-          onClose={onMobileClose}
-          ModalProps={{
-            keepMounted: true,
-          }}
-          sx={{
-            display: { xs: 'block', md: 'none' },
-            '& .MuiDrawer-paper': {
-              boxSizing: 'border-box',
-              width: drawerWidth,
-              marginTop: { xs: '64px', sm: '72px' },
-              backgroundColor: '#FFFFFF',
-              borderRight: '1px solid #E8E9EB',
-            },
-          }}
-        >
-          {drawerContent}
-        </Drawer>
-      ) : (
-        <Drawer
-          variant="permanent"
-          sx={{
-            display: { xs: 'none', md: 'block' },
-            width: drawerWidth,
-            flexShrink: 0,
-            '& .MuiDrawer-paper': {
-              width: drawerWidth,
-              boxSizing: 'border-box',
-              marginTop: '72px',
-              backgroundColor: '#FFFFFF',
-              borderRight: '1px solid #E8E9EB',
-              boxShadow: 'none',
-            },
-          }}
-        >
-          {drawerContent}
-        </Drawer>
-      )}
-    </>
-  );
+const ICON_MAP: Record<SidebarIconName, LucideIcon> = {
+  home: Home,
+  plusCircle: PlusCircle,
+  clipboardList: ClipboardList,
+  info: Info,
+  helpCircle: HelpCircle,
+  messageCircle: MessageCircle,
+  accessibility: Accessibility,
+  mapPin: MapPin,
 };
 
+export interface SidebarProps {
+  mobileOpen?: boolean;
+  onMobileClose?: () => void;
+  isMobile?: boolean;
+  collapsed?: boolean;
+  onToggleCollapse?: () => void;
+}
+
+export function Sidebar({
+  mobileOpen = false,
+  onMobileClose,
+  isMobile = false,
+  collapsed = false,
+  onToggleCollapse,
+}: SidebarProps) {
+  const location = useLocation();
+
+  const sidebarContent = (
+    <div className="flex h-full flex-col overflow-auto">
+      <div
+        className={cn(
+          'flex items-center border-b border-border transition-[padding] duration-200',
+          collapsed ? 'justify-center px-0 py-4' : 'px-4 py-4'
+        )}
+      >
+        <Link
+          to="/"
+          className="flex items-center justify-center focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-participa-blue focus-visible:ring-offset-2 rounded-md"
+          aria-label="Participa DF - Página inicial"
+        >
+          {collapsed ? (
+            <img
+              src="/logo-participa-azul.svg"
+              alt=""
+              className="h-8 w-8 object-contain"
+              aria-hidden
+            />
+          ) : (
+            <img
+              src="/logo-participa-azul.svg"
+              alt=""
+              className="h-8 w-full max-w-[160px] object-contain object-left"
+              aria-hidden
+            />
+          )}
+        </Link>
+      </div>
+      <nav className="flex-1 px-3 py-4" aria-label="Navegação principal">
+        <ul className="space-y-0.5">
+          {SIDEBAR_NAV_ITEMS.map((item) => {
+            const isSelected = location.pathname === item.path;
+            const Icon = ICON_MAP[item.icon];
+            return (
+              <li key={`${item.path}-${item.label}`}>
+                <Link
+                  to={item.path}
+                  onClick={isMobile ? onMobileClose : undefined}
+                  aria-current={isSelected ? 'page' : undefined}
+                  title={collapsed ? item.label : undefined}
+                  className={cn(
+                    'flex items-center rounded-lg py-2.5 text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-participa-blue focus-visible:ring-offset-2',
+                    collapsed ? 'justify-center px-0' : 'gap-3 px-3',
+                    isSelected
+                      ? 'bg-participa-blue/10 text-participa-blue'
+                      : 'text-muted-foreground hover:bg-muted hover:text-foreground'
+                  )}
+                >
+                  <span
+                    className={cn(
+                      'flex h-8 w-8 shrink-0 items-center justify-center rounded-lg',
+                      isSelected ? 'bg-participa-blue/20 text-participa-blue' : 'bg-muted text-muted-foreground'
+                    )}
+                  >
+                    <Icon className="h-4 w-4" aria-hidden />
+                  </span>
+                  {!collapsed && <span className="truncate">{item.label}</span>}
+                </Link>
+              </li>
+            );
+          })}
+        </ul>
+      </nav>
+      {!isMobile && onToggleCollapse && (
+        <div className="border-t border-border p-2">
+          <Button
+            type="button"
+            variant="ghost"
+            size="icon"
+            onClick={onToggleCollapse}
+            aria-label={collapsed ? 'Expandir menu' : 'Recolher menu'}
+            className={cn(
+              'h-9 w-9 rounded-lg text-muted-foreground hover:bg-muted hover:text-foreground',
+              collapsed && 'mx-auto'
+            )}
+          >
+            {collapsed ? (
+              <PanelLeftOpen className="h-5 w-5" aria-hidden />
+            ) : (
+              <PanelLeftClose className="h-5 w-5" aria-hidden />
+            )}
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+
+  if (isMobile) {
+    return (
+      <>
+        <div
+          className={cn(
+            'fixed inset-0 bg-black/50 transition-opacity md:hidden',
+            mobileOpen ? 'opacity-100' : 'pointer-events-none opacity-0'
+          )}
+          style={{ zIndex: tokens.zIndex.overlay }}
+          aria-hidden
+          onClick={onMobileClose}
+        />
+        <aside
+          className={cn(
+            'fixed left-0 top-0 z-[100] w-[280px] max-w-[85vw] border-r border-border bg-card shadow-xl transition-transform duration-200 ease-out md:hidden',
+            mobileOpen ? 'translate-x-0' : '-translate-x-full'
+          )}
+          style={{
+            top: '92px',
+            height: 'calc(100vh - 92px)',
+            zIndex: tokens.zIndex.modal,
+          }}
+          aria-label="Menu lateral"
+        >
+          {sidebarContent}
+        </aside>
+      </>
+    );
+  }
+
+  return (
+    <aside
+      className={cn(
+        'hidden shrink-0 border-r border-border bg-card transition-[width] duration-200 ease-out md:block',
+        collapsed ? 'w-[72px]' : 'w-[240px]'
+      )}
+      style={{ width: collapsed ? SIDEBAR_WIDTH_COLLAPSED : SIDEBAR_WIDTH }}
+      aria-label="Menu lateral"
+    >
+      {sidebarContent}
+    </aside>
+  );
+}

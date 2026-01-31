@@ -1,22 +1,14 @@
 import {
   Dialog,
-  DialogTitle,
   DialogContent,
-  DialogActions,
-  Button,
-  Typography,
-  Alert,
-  Box,
-  Chip,
-  List,
-  ListItem,
-  ListItemText,
-} from '@mui/material';
-import {
-  Warning as WarningIcon,
-  Person as PersonIcon,
-  Delete as DeleteIcon,
-} from '@mui/icons-material';
+  DialogHeader,
+  DialogFooter,
+  DialogTitle,
+} from './ui/dialog';
+import { Alert, AlertDescription } from './ui/alert';
+import { Button } from './ui/button';
+import { Badge } from './ui/badge';
+import { AlertTriangle, User, Trash2 } from 'lucide-react';
 import { type TipoDadoPessoal } from '../utils/detectarDadosPessoais';
 
 interface PersonalDataAlertProps {
@@ -27,149 +19,106 @@ interface PersonalDataAlertProps {
   onCancelar: () => void;
 }
 
+const getBadgeVariant = (tipo: TipoDadoPessoal): 'destructive' | 'warning' | 'info' | 'default' => {
+  switch (tipo) {
+    case 'CPF':
+    case 'RG':
+      return 'destructive';
+    case 'Telefone':
+    case 'E-mail':
+      return 'warning';
+    case 'Nome Completo':
+    case 'Endereço':
+      return 'info';
+    default:
+      return 'default';
+  }
+};
+
 export const PersonalDataAlert = ({
   open,
   tiposEncontrados,
   onConfirmarIdentificado,
   onRemoverDados,
   onCancelar,
-}: PersonalDataAlertProps) => {
-  const getColorForType = (tipo: TipoDadoPessoal) => {
-    switch (tipo) {
-      case 'CPF':
-      case 'RG':
-        return 'error';
-      case 'Telefone':
-      case 'E-mail':
-        return 'warning';
-      case 'Nome Completo':
-      case 'Endereço':
-        return 'info';
-      default:
-        return 'default';
-    }
-  };
-
-  return (
-    <Dialog
-      open={open}
-      onClose={onCancelar}
-      maxWidth="sm"
-      fullWidth
+}: PersonalDataAlertProps) => (
+  <Dialog open={open} onOpenChange={(o) => !o && onCancelar()}>
+    <DialogContent
+      className="max-w-sm sm:max-w-lg"
       aria-labelledby="personal-data-alert-title"
       aria-describedby="personal-data-alert-description"
+      showClose={false}
     >
-      <DialogTitle
-        id="personal-data-alert-title"
-        sx={{
-          display: 'flex',
-          alignItems: 'center',
-          gap: 1,
-          paddingBottom: 1,
-        }}
-      >
-        <WarningIcon color="warning" sx={{ fontSize: 28 }} />
-        <Typography variant="h6" component="span" sx={{ fontWeight: 600 }}>
+      <DialogHeader>
+        <DialogTitle
+          id="personal-data-alert-title"
+          className="flex items-center gap-2 pb-2"
+        >
+          <AlertTriangle className="h-7 w-7 text-amber-600" aria-hidden />
           Dados Pessoais Detectados
-        </Typography>
-      </DialogTitle>
-      
-      <DialogContent>
-        <Alert severity="warning" sx={{ marginBottom: 3 }} role="alert">
-          <Typography variant="body2" id="personal-data-alert-description">
-            <strong>Atenção:</strong> Sua manifestação contém dados pessoais sensíveis. 
-            Por segurança e conformidade com a LGPD, você tem duas opções:
-          </Typography>
-        </Alert>
+        </DialogTitle>
+      </DialogHeader>
 
-        <Box sx={{ marginBottom: 3 }}>
-          <Typography variant="subtitle2" sx={{ fontWeight: 600, marginBottom: 1.5 }}>
-            Dados detectados:
-          </Typography>
-          <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 1 }}>
-            {tiposEncontrados.map((tipo) => (
-              <Chip
-                key={tipo}
-                label={tipo}
-                color={getColorForType(tipo)}
-                size="small"
-                sx={{ fontWeight: 500 }}
-              />
-            ))}
-          </Box>
-        </Box>
+      <Alert variant="warning" className="mb-4" role="alert">
+        <AlertDescription id="personal-data-alert-description">
+          <strong>Atenção:</strong> Sua manifestação contém dados pessoais sensíveis.
+          Por segurança e conformidade com a LGPD, você tem duas opções:
+        </AlertDescription>
+      </Alert>
 
-        <Box
-          sx={{
-            backgroundColor: '#F4F5F7',
-            borderRadius: 2,
-            padding: 2,
-            marginBottom: 2,
-          }}
-        >
-          <Typography variant="body2" sx={{ fontWeight: 600, marginBottom: 1 }}>
-            Opções disponíveis:
-          </Typography>
-          <List dense sx={{ padding: 0 }}>
-            <ListItem sx={{ paddingX: 0, paddingY: 0.5 }}>
-              <ListItemText
-                primary={
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    Seguir como identificada
-                  </Typography>
-                }
-                secondary="Seus dados serão salvos e você poderá acompanhar o registro"
-              />
-            </ListItem>
-            <ListItem sx={{ paddingX: 0, paddingY: 0.5 }}>
-              <ListItemText
-                primary={
-                  <Typography variant="body2" sx={{ fontWeight: 500 }}>
-                    Remover dados pessoais
-                  </Typography>
-                }
-                secondary="Os dados serão removidos e substituídos por [DADO REMOVIDO]"
-              />
-            </ListItem>
-          </List>
-        </Box>
+      <div className="mb-4">
+        <p className="mb-2 text-sm font-semibold">Dados detectados:</p>
+        <div className="flex flex-wrap gap-2">
+          {tiposEncontrados.map((tipo) => (
+            <Badge key={tipo} variant={getBadgeVariant(tipo)}>
+              {tipo}
+            </Badge>
+          ))}
+        </div>
+      </div>
 
-        <Alert severity="info" sx={{ marginTop: 2 }}>
-          <Typography variant="caption">
-            <strong>Importante:</strong> Dados pessoais em manifestações anônimas podem 
-            comprometer sua privacidade. Recomendamos remover ou registrar como identificada.
-          </Typography>
-        </Alert>
-      </DialogContent>
+      <div className="rounded-lg bg-muted/50 p-4">
+        <p className="mb-2 text-sm font-semibold">Opções disponíveis:</p>
+        <ul className="list-none space-y-2 p-0 text-sm">
+          <li>
+            <span className="font-medium">Seguir como identificada</span>
+            <p className="text-muted-foreground">
+              Seus dados serão salvos e você poderá acompanhar o registro
+            </p>
+          </li>
+          <li>
+            <span className="font-medium">Remover dados pessoais</span>
+            <p className="text-muted-foreground">
+              Os dados serão removidos e substituídos por [DADO REMOVIDO]
+            </p>
+          </li>
+        </ul>
+      </div>
 
-      <DialogActions sx={{ padding: 2, paddingTop: 1 }}>
-        <Button
-          onClick={onCancelar}
-          variant="outlined"
-          sx={{ minWidth: 100 }}
-        >
+      <Alert variant="info" className="mt-4">
+        <AlertDescription className="text-xs">
+          <strong>Importante:</strong> Dados pessoais em manifestações anônimas podem
+          comprometer sua privacidade. Recomendamos remover ou registrar como identificada.
+        </AlertDescription>
+      </Alert>
+
+      <DialogFooter className="flex flex-wrap gap-2 pt-4">
+        <Button variant="outline" onClick={onCancelar} className="min-w-[100px]">
           Cancelar
         </Button>
         <Button
+          variant="outline"
+          className="min-w-[140px] border-destructive text-destructive hover:bg-destructive/10"
           onClick={onRemoverDados}
-          variant="outlined"
-          color="error"
-          startIcon={<DeleteIcon />}
-          sx={{ minWidth: 140 }}
         >
+          <Trash2 className="h-4 w-4" />
           Remover Dados
         </Button>
-        <Button
-          onClick={onConfirmarIdentificado}
-          variant="contained"
-          color="primary"
-          startIcon={<PersonIcon />}
-          sx={{ minWidth: 180 }}
-        >
+        <Button onClick={onConfirmarIdentificado} className="min-w-[180px]">
+          <User className="h-4 w-4" />
           Seguir como Identificada
         </Button>
-      </DialogActions>
-    </Dialog>
-  );
-};
-
+      </DialogFooter>
+    </DialogContent>
+  </Dialog>
+);

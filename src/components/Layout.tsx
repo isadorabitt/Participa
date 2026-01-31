@@ -1,88 +1,84 @@
-import { Box, useMediaQuery, useTheme } from '@mui/material';
 import { useState, useEffect } from 'react';
-import { Header } from './Header';
+import { Outlet, useLocation } from 'react-router-dom';
+import { Header, FULL_HEADER_HEIGHT, COMPACT_HEADER_HEIGHT } from './Header';
 import { Sidebar } from './Sidebar';
 import { Footer } from './Footer';
-import { AccessibilityDialog } from './AccessibilityDialog';
 import { VirtualAssistant } from './VirtualAssistant';
-import { Outlet } from 'react-router-dom';
-import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
-import { ColorBlindFilters } from '../utils/colorBlindFilters';
+import { useKeyboardShortcuts } from '@/hooks/useKeyboardShortcuts';
+import { ColorBlindFilters } from '@/utils/colorBlindFilters';
+import { cn } from '@/lib/utils';
 
-export const Layout = () => {
-  const [accessibilityDialogOpen, setAccessibilityDialogOpen] = useState(false);
+function useIsMobile() {
+  const [isMobile, setIsMobile] = useState(false);
+  useEffect(() => {
+    const mq = window.matchMedia('(max-width: 768px)');
+    setIsMobile(mq.matches);
+    const handler = () => setIsMobile(mq.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+  return isMobile;
+}
+
+
+export function Layout() {
+  const location = useLocation();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const theme = useTheme();
-  const isMobile = useMediaQuery(theme.breakpoints.down('md'));
+  const isMobile = useIsMobile();
 
-  const handleAccessibilityClick = () => {
-    setAccessibilityDialogOpen(true);
-  };
+  const isHome = location.pathname === '/';
+  const showSidebar = !isHome;
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
-  const handleCloseDialog = () => {
-    setAccessibilityDialogOpen(false);
-  };
+  const handleMobileMenuToggle = () => setMobileMenuOpen((prev) => !prev);
+  const handleMobileMenuClose = () => setMobileMenuOpen(false);
 
-  const handleMobileMenuToggle = () => {
-    setMobileMenuOpen(!mobileMenuOpen);
-  };
+  useKeyboardShortcuts();
 
-  const handleMobileMenuClose = () => {
-    setMobileMenuOpen(false);
-  };
-
-  // Atalhos de teclado
-  useKeyboardShortcuts(handleAccessibilityClick);
-
-  // Listener para toggle do menu via atalho
   useEffect(() => {
     const handleToggleMenu = () => {
-      if (isMobile) {
-        handleMobileMenuToggle();
-      }
+      if (isMobile) setMobileMenuOpen((prev) => !prev);
     };
-
-    const handleOpenAccessibility = () => {
-      setAccessibilityDialogOpen(true);
-    };
-
-    window.addEventListener('toggle-menu', handleToggleMenu);
-    window.addEventListener('open-accessibility-dialog', handleOpenAccessibility);
-    
+    globalThis.addEventListener('toggle-menu', handleToggleMenu);
     return () => {
-      window.removeEventListener('toggle-menu', handleToggleMenu);
-      window.removeEventListener('open-accessibility-dialog', handleOpenAccessibility);
+      globalThis.removeEventListener('toggle-menu', handleToggleMenu);
     };
   }, [isMobile]);
 
   return (
-    <Box sx={{ display: 'flex', flexDirection: 'column', minHeight: '100vh' }}>
+    <div className="flex min-h-screen flex-col bg-background">
       <Header
-        onAccessibilityClick={handleAccessibilityClick}
+        compact={showSidebar}
         onMenuClick={isMobile ? handleMobileMenuToggle : undefined}
+        isMobile={isMobile}
       />
-      <Box sx={{ display: 'flex', flex: 1, marginTop: '64px' }}>
-        <Sidebar mobileOpen={mobileMenuOpen} onMobileClose={handleMobileMenuClose} />
-        <Box
-          component="main"
-          sx={{
-            flexGrow: 1,
-            p: { xs: 3, sm: 4, md: 5 },
-            backgroundColor: '#FAFBFC',
-            minHeight: 'calc(100vh - 128px)',
-            width: { xs: '100%', md: `calc(100% - 240px)` },
-            marginLeft: { xs: 0, md: '240px' },
-            marginTop: { xs: '64px', sm: '72px' },
-          }}
+      <div
+        className="flex flex-1"
+        style={{ paddingTop: showSidebar ? `${COMPACT_HEADER_HEIGHT}px` : `${FULL_HEADER_HEIGHT}px` }}
+      >
+        {showSidebar && (
+          <Sidebar
+            collapsed={sidebarCollapsed}
+            onToggleCollapse={() => setSidebarCollapsed((prev) => !prev)}
+            mobileOpen={mobileMenuOpen}
+            onMobileClose={handleMobileMenuClose}
+            isMobile={isMobile}
+          />
+        )}
+        <main
+          className={cn(
+            'min-h-[calc(100vh-4rem)] min-w-0 flex-1 bg-background',
+            showSidebar ? 'w-full p-4 sm:p-6 md:p-6' : 'w-full',
+            showSidebar && sidebarCollapsed && 'md:w-[calc(100%-72px)]',
+            showSidebar && !sidebarCollapsed && 'md:w-[calc(100%-240px)]'
+          )}
         >
           <Outlet />
-        </Box>
-      </Box>
+        </main>
+        </div>
       <Footer />
-      <AccessibilityDialog open={accessibilityDialogOpen} onClose={handleCloseDialog} />
       <VirtualAssistant />
       <ColorBlindFilters />
-    </Box>
+    </div>
   );
-};
-
+}

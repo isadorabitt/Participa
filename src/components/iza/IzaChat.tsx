@@ -1,23 +1,9 @@
 import {
-  Box,
-  Paper,
-  Typography,
-  IconButton,
-  Avatar,
-  Chip,
-  Collapse,
-  Button,
-} from '@mui/material';
-import {
-  Close as CloseIcon,
-  VolumeUp as VolumeUpIcon,
-  VolumeOff as VolumeOffIcon,
-  HelpOutline as HelpOutlineIcon,
-  Lightbulb as LightbulbIcon,
-  Repeat as RepeatIcon,
-} from '@mui/icons-material';
+  Button } from '../ui/button';
 import { IzaBubble } from './IzaBubble';
 import { useState, useEffect, useRef } from 'react';
+import { X, Volume2, VolumeX, HelpCircle, Lightbulb, RotateCcw } from 'lucide-react';
+import { cn } from '@/lib/utils';
 
 interface Message {
   id: number;
@@ -67,304 +53,156 @@ export const IzaChat = ({
 
   if (!isOpen && isMinimized) {
     return (
-      <Paper
-        elevation={8}
-        sx={{
-          position: 'fixed',
-          bottom: { xs: 80, sm: 100 },
-          right: { xs: 8, sm: 24 },
-          width: 200,
-          borderRadius: 3,
-          overflow: 'hidden',
-          cursor: 'pointer',
-          animation: 'minimized-appear 0.3s ease-out',
-          '@keyframes minimized-appear': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateY(20px) scale(0.9)',
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateY(0) scale(1)',
-            },
-          },
-          '&:hover': {
-            boxShadow: '0px 8px 24px rgba(0, 0, 0, 0.2)',
-            transform: 'translateY(-4px)',
-          },
-          transition: 'all 0.3s ease-in-out',
-        }}
+      <div
+        role="button"
+        tabIndex={0}
         onClick={() => setIsMinimized(false)}
+        onKeyDown={(e) => e.key === 'Enter' && setIsMinimized(false)}
+        className="fixed bottom-20 right-6 z-[1001] w-[200px] cursor-pointer overflow-hidden rounded-xl bg-card shadow-lg transition-all hover:-translate-y-1 hover:shadow-xl sm:bottom-24"
       >
-        <Box
-          sx={{
-            background: 'linear-gradient(135deg, #E1007A 0%, #B80062 100%)',
-            color: 'white',
-            padding: 1.5,
-            display: 'flex',
-            alignItems: 'center',
-            gap: 1,
-          }}
-        >
-          <Avatar
-            sx={{
-              backgroundColor: 'rgba(255, 255, 255, 0.2)',
-              width: 32,
-              height: 32,
-            }}
-          >
+        <div className="flex items-center gap-2 bg-gradient-to-br from-participa-pink to-participa-pink-dark px-4 py-3 text-white">
+          <div className="flex h-8 w-8 items-center justify-center rounded-full bg-white/20 text-xs font-semibold">
             IZ
-          </Avatar>
-          <Typography variant="body2" sx={{ fontWeight: 600, flex: 1 }}>
-            {title}
-          </Typography>
+          </div>
+          <span className="flex-1 text-sm font-semibold">{title}</span>
           {messages.length > 0 && (
-            <Chip
-              label={messages.length}
-              size="small"
-              sx={{
-                backgroundColor: '#FFC107',
-                color: '#000',
-                fontWeight: 600,
-                minWidth: 24,
-                height: 20,
-              }}
-            />
+            <span className="flex h-5 min-w-[24px] items-center justify-center rounded-full bg-amber-400 px-1.5 text-xs font-semibold text-black">
+              {messages.length}
+            </span>
           )}
-        </Box>
-      </Paper>
+        </div>
+      </div>
     );
   }
 
+  if (!isOpen) return null;
+
   return (
-    <Collapse in={isOpen} timeout="auto" unmountOnExit>
-      <Paper
-        elevation={8}
-        sx={{
-          position: 'fixed',
-          bottom: { xs: 80, sm: 100 },
-          right: { xs: 8, sm: 24 },
-          left: { xs: 8, sm: 'auto' },
-          width: { xs: 'calc(100vw - 16px)', sm: 380 },
-          maxWidth: 'calc(100vw - 48px)',
-          maxHeight: 'calc(100vh - 140px)',
-          zIndex: 1001,
-          display: 'flex',
-          flexDirection: 'column',
-          borderRadius: 3,
-          overflow: 'hidden',
-          animation: 'chat-fade-in 0.4s cubic-bezier(0.4, 0, 0.2, 1)',
-          '@keyframes chat-fade-in': {
-            '0%': {
-              opacity: 0,
-              transform: 'translateY(20px) scale(0.95)',
-            },
-            '100%': {
-              opacity: 1,
-              transform: 'translateY(0) scale(1)',
-            },
-          },
-        }}
-        role="dialog"
-        aria-labelledby="iza-chat-title"
-        aria-describedby="iza-chat-messages"
-      >
-        {/* Cabeçalho */}
-        <Box
-          sx={{
-            background: 'linear-gradient(135deg, #E1007A 0%, #B80062 100%)',
-            color: 'white',
-            padding: 2,
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            boxShadow: '0px 2px 8px rgba(225, 0, 122, 0.15)',
-          }}
-        >
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Avatar
-              sx={{
-                backgroundColor: 'rgba(255, 255, 255, 0.2)',
-                width: 40,
-                height: 40,
-              }}
-            >
-              IZ
-            </Avatar>
-            <Box>
-              <Typography
-                id="iza-chat-title"
-                variant="subtitle1"
-                sx={{ fontWeight: 600, fontSize: '1rem' }}
-              >
-                {title}
-              </Typography>
-              <Typography variant="caption" sx={{ opacity: 0.9, fontSize: '0.75rem' }}>
-                {isEnabled ? 'Ativa' : 'Inativa'}
-              </Typography>
-            </Box>
-          </Box>
-          <Box sx={{ display: 'flex', gap: 0.5 }}>
-            <IconButton
-              size="small"
-              onClick={onToggleEnabled}
-              aria-label={isEnabled ? 'Desativar áudio' : 'Ativar áudio'}
-              sx={{
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              {isEnabled ? <VolumeUpIcon /> : <VolumeOffIcon />}
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={onHelp}
-              aria-label="Ajuda"
-              sx={{
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              <HelpOutlineIcon />
-            </IconButton>
-            <IconButton
-              size="small"
-              onClick={() => {
-                setIsMinimized(true);
-                onClose();
-              }}
-              aria-label="Minimizar chat"
-              sx={{
-                color: 'white',
-                '&:hover': {
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                },
-              }}
-            >
-              <CloseIcon />
-            </IconButton>
-          </Box>
-        </Box>
-
-        {/* Mensagens */}
-        <Box
-          id="iza-chat-messages"
-          sx={{
-            flex: 1,
-            overflowY: 'auto',
-            padding: 2,
-            backgroundColor: '#F4F5F7',
-            '&::-webkit-scrollbar': {
-              width: '8px',
-            },
-            '&::-webkit-scrollbar-track': {
-              backgroundColor: 'transparent',
-            },
-            '&::-webkit-scrollbar-thumb': {
-              backgroundColor: '#D1D3D6',
-              borderRadius: '4px',
-              '&:hover': {
-                backgroundColor: '#B9BCC2',
-              },
-            },
-          }}
-        >
-          {messages.map((message, index) => (
-            <IzaBubble
-              key={message.id}
-              text={message.text}
-              type={message.type}
-              timestamp={message.timestamp}
-              isTyping={index === messages.length - 1 && message.type === 'assistant'}
-            />
-          ))}
-          <div ref={messagesEndRef} />
-        </Box>
-
-        {/* Controles */}
-        <Box
-          sx={{
-            padding: 2,
-            backgroundColor: 'white',
-            borderTop: '1px solid',
-            borderColor: 'divider',
-            display: 'flex',
-            flexDirection: 'column',
-            gap: 1.5,
-          }}
-        >
-          <Box sx={{ display: 'flex', gap: 1, flexWrap: 'wrap' }}>
-            <Button
-              variant="outlined"
-              size="small"
-              startIcon={<HelpOutlineIcon />}
-              onClick={onHelp}
-              disabled={!isEnabled}
-              aria-label="Solicitar ajuda"
-              sx={{ flex: 1, minWidth: '120px' }}
-            >
-              Ajuda
-            </Button>
-            {onTip && (
-              <Button
-                variant="outlined"
-                size="small"
-                startIcon={<LightbulbIcon />}
-                onClick={onTip}
-                disabled={!isEnabled}
-                aria-label="Solicitar dica"
-                sx={{ flex: 1, minWidth: '120px' }}
-              >
-                Dica
-              </Button>
-            )}
-            {onRepeat && (
-              <IconButton
-                onClick={onRepeat}
-                disabled={!isEnabled || messages.length === 0 || isSpeaking}
-                aria-label="Repetir última mensagem"
-                size="small"
-                sx={{
-                  border: '1px solid',
-                  borderColor: 'divider',
-                }}
-              >
-                {isSpeaking ? <VolumeOffIcon /> : <RepeatIcon />}
-              </IconButton>
-            )}
-          </Box>
-
-          <Box
-            sx={{
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'space-between',
-              paddingTop: 1,
-              borderTop: '1px solid',
-              borderColor: 'divider',
-            }}
+    <div
+      role="dialog"
+      aria-labelledby="iza-chat-title"
+      aria-describedby="iza-chat-messages"
+      className="fixed bottom-20 right-6 left-6 z-[1001] flex max-h-[calc(100vh-140px)] w-[calc(100vw-32px)] max-w-[380px] flex-col overflow-hidden rounded-xl bg-card shadow-lg animate-in fade-in slide-in-from-bottom-4 sm:left-auto sm:right-6"
+    >
+      <div className="flex items-center justify-between gap-3 bg-gradient-to-br from-participa-pink to-participa-pink-dark px-4 py-3 text-white shadow-md">
+        <div className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/20 text-sm font-semibold">
+            IZ
+          </div>
+          <div>
+            <h2 id="iza-chat-title" className="text-base font-semibold">
+              {title}
+            </h2>
+            <p className="text-xs text-white">{isEnabled ? 'Ativa' : 'Inativa'}</p>
+          </div>
+        </div>
+        <div className="flex gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onToggleEnabled}
+            aria-label={isEnabled ? 'Desativar áudio' : 'Ativar áudio'}
+            className="text-white hover:bg-white/10"
           >
-            <Chip
-              label={isEnabled ? 'Ativado' : 'Desativado'}
-              color={isEnabled ? 'success' : 'default'}
-              size="small"
-            />
+            {isEnabled ? <Volume2 className="h-4 w-4" /> : <VolumeX className="h-4 w-4" />}
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={onHelp}
+            aria-label="Ajuda"
+            className="text-white hover:bg-white/10"
+          >
+            <HelpCircle className="h-4 w-4" />
+          </Button>
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              setIsMinimized(true);
+              onClose();
+            }}
+            aria-label="Minimizar chat"
+            className="text-white hover:bg-white/10"
+          >
+            <X className="h-4 w-4" />
+          </Button>
+        </div>
+      </div>
+
+      <div
+        id="iza-chat-messages"
+        className="flex-1 overflow-y-auto bg-muted p-4 [&::-webkit-scrollbar-thumb]:rounded [&::-webkit-scrollbar-thumb]:bg-muted-foreground/30 [&::-webkit-scrollbar]:w-2"
+      >
+        {messages.map((message, index) => (
+          <IzaBubble
+            key={message.id}
+            text={message.text}
+            type={message.type}
+            timestamp={message.timestamp}
+            isTyping={index === messages.length - 1 && message.type === 'assistant'}
+          />
+        ))}
+        <div ref={messagesEndRef} />
+      </div>
+
+      <div className="flex flex-col gap-3 border-t border-border bg-background p-4">
+        <div className="flex flex-wrap gap-2">
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={onHelp}
+            disabled={!isEnabled}
+            aria-label="Solicitar ajuda"
+            className="min-w-[120px] flex-1"
+          >
+            <HelpCircle className="h-4 w-4" />
+            Ajuda
+          </Button>
+          {onTip && (
             <Button
-              variant="text"
-              size="small"
-              onClick={onToggleEnabled}
-              aria-label={isEnabled ? 'Desativar assistente' : 'Ativar assistente'}
+              variant="outline"
+              size="sm"
+              onClick={onTip}
+              disabled={!isEnabled}
+              aria-label="Solicitar dica"
+              className="min-w-[120px] flex-1"
             >
-              {isEnabled ? 'Desativar' : 'Ativar'}
+              <Lightbulb className="h-4 w-4" />
+              Dica
             </Button>
-          </Box>
-        </Box>
-      </Paper>
-    </Collapse>
+          )}
+          {onRepeat && (
+            <Button
+              variant="outline"
+              size="icon"
+              onClick={onRepeat}
+              disabled={!isEnabled || messages.length === 0 || isSpeaking}
+              aria-label="Repetir última mensagem"
+            >
+              {isSpeaking ? <VolumeX className="h-4 w-4" /> : <RotateCcw className="h-4 w-4" />}
+            </Button>
+          )}
+        </div>
+        <div className="flex items-center justify-between border-t border-border pt-2">
+          <span
+            className={cn(
+              'rounded-full px-2 py-0.5 text-xs font-medium',
+              isEnabled ? 'bg-green-100 text-green-800' : 'bg-muted text-muted-foreground'
+            )}
+          >
+            {isEnabled ? 'Ativado' : 'Desativado'}
+          </span>
+          <Button
+            variant="ghost"
+            size="sm"
+            onClick={onToggleEnabled}
+            aria-label={isEnabled ? 'Desativar assistente' : 'Ativar assistente'}
+          >
+            {isEnabled ? 'Desativar' : 'Ativar'}
+          </Button>
+        </div>
+      </div>
+    </div>
   );
 };
-

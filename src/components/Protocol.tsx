@@ -1,55 +1,47 @@
-import {
-  Box,
-  Typography,
-  Paper,
-  Button,
-  Alert,
-  IconButton,
-  Snackbar,
-} from '@mui/material';
-import {
-  ContentCopy as ContentCopyIcon,
-  CheckCircle as CheckCircleIcon,
-  Print as PrintIcon,
-} from '@mui/icons-material';
 import { useReport } from '../context/ReportContext';
 import { useState, useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { createInitialTrail, saveTrailForProtocol } from '../utils/trailTracking';
+import { Button } from './ui/button';
+import { Alert, AlertDescription } from './ui/alert';
+import { Card, CardContent } from './ui/card';
+import { ProtocolDisplay } from './ProtocolDisplay';
 import { ProtocolTimeline } from './ProtocolTimeline';
-
+import { CheckCircle2, Printer } from 'lucide-react';
 export const Protocol = () => {
   const { report, generateProtocol, clearReport } = useReport();
   const [copied, setCopied] = useState(false);
+  const navigate = useNavigate();
 
-  // Garantir que o protocolo foi gerado e salvar no localStorage
   useEffect(() => {
     if (!report.protocol) {
       generateProtocol();
     } else {
-      // Salvar registro no localStorage
       try {
         const stored = localStorage.getItem('participa_reports');
         const reports = stored ? JSON.parse(stored) : [];
-        
-        // Verificar se já existe (evitar duplicatas)
-        const exists = reports.some((r: any) => r.protocol === report.protocol);
+        const exists = reports.some((r: { protocol?: string }) => r.protocol === report.protocol);
         if (!exists) {
           const reportToSave = {
             ...report,
-            id: report.protocol, // Usar protocolo como ID
+            id: report.protocol,
             createdAt: report.createdAt.toISOString(),
             updatedAt: report.updatedAt.toISOString(),
           };
           reports.push(reportToSave);
           localStorage.setItem('participa_reports', JSON.stringify(reports));
+          const initialTrail = createInitialTrail(report.protocol, {
+            description: report.description,
+            summary: report.summary,
+            classification: report.classification,
+          });
+          saveTrailForProtocol(report.protocol, initialTrail);
         }
-      } catch (error) {
-        // Erro ao salvar - não crítico, apenas log em desenvolvimento
-        if (import.meta.env.DEV) {
-          console.error('Erro ao salvar registro:', error);
-        }
+      } catch {
+        if (import.meta.env.DEV) console.error('Erro ao salvar registro');
       }
     }
-  }, [report.protocol, generateProtocol]);
+  }, [report.protocol, generateProtocol, report]);
 
   const handleCopyProtocol = () => {
     if (report.protocol) {
@@ -65,212 +57,98 @@ export const Protocol = () => {
 
   const handleNewReport = () => {
     clearReport();
-    // Usar navigate do react-router em vez de window.location
-    window.location.href = '/novo-registro';
+    navigate('/novo-registro');
   };
 
+  const SECTION_SPACING = 'mb-10';
   return (
-    <Box sx={{ width: '100%', textAlign: 'center', paddingY: { xs: 3, sm: 5 } }}>
-      <Box
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          marginBottom: 3,
-        }}
-      >
-        <Box
-          sx={{
-            width: 120,
-            height: 120,
-            borderRadius: '50%',
-            backgroundColor: '#E8F5E9',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            marginBottom: 3,
-          }}
-        >
-          <CheckCircleIcon
-            sx={{ fontSize: 64, color: '#2E7D32' }}
-            aria-hidden="true"
-          />
-        </Box>
-      </Box>
+    <div className="mx-auto w-full max-w-2xl py-8 text-center md:py-12">
+      <div className={`flex justify-center ${SECTION_SPACING}`}>
+        <div className="flex h-24 w-24 items-center justify-center rounded-full bg-green-100 md:h-[120px] md:w-[120px]">
+          <CheckCircle2 className="h-12 w-12 text-green-700 md:h-16 md:w-16" aria-hidden />
+        </div>
+      </div>
 
-      <Typography 
-        variant="h3" 
-        component="h1"
-        gutterBottom
-        sx={{
-          fontWeight: 700,
-          color: '#1A1A1A',
-          marginBottom: 2,
-          fontSize: { xs: '1.75rem', sm: '2.25rem' },
-        }}
-      >
+      <h1 className="mb-2 text-2xl font-bold text-foreground md:text-3xl">
         Agradeço o seu contato
-      </Typography>
-
-      <Typography 
-        variant="h6" 
-        color="text.secondary" 
-        paragraph
-        sx={{
-          fontWeight: 400,
-          color: '#6B7280',
-          marginBottom: 4,
-          fontSize: { xs: '1rem', sm: '1.125rem' },
-        }}
-      >
+      </h1>
+      <p className={`text-base text-muted-foreground md:text-lg ${SECTION_SPACING}`}>
         O registro foi realizado com sucesso. Até breve!
-      </Typography>
+      </p>
 
-      <Paper
-        elevation={0}
-        sx={{
-          padding: { xs: 3, sm: 4 },
-          marginY: 4,
-          backgroundColor: '#FFFFFF',
-          border: '2px solid #E5E7EB',
-          borderRadius: 3,
-          maxWidth: 600,
-          marginX: 'auto',
-        }}
-      >
-        <Typography 
-          variant="overline" 
-          sx={{ 
-            color: '#6B7280',
-            fontSize: '0.75rem',
-            fontWeight: 600,
-            letterSpacing: '0.1em',
-            textTransform: 'uppercase',
-          }}
-        >
-          Protocolo de Registro
-        </Typography>
-        <Typography
-          variant="h4"
-          component="div"
-          sx={{
-            fontFamily: 'monospace',
-            fontWeight: 700,
-            marginY: 2,
-            wordBreak: 'break-word',
-            color: '#005FDB',
-            fontSize: { xs: '1.5rem', sm: '2rem' },
-          }}
-          aria-label={`Protocolo: ${report.protocol}`}
-        >
-          {report.protocol}
-        </Typography>
-        <Box 
-          sx={{ 
-            display: 'flex', 
-            justifyContent: 'center', 
-            gap: 1.5, 
-            marginTop: 3,
-            paddingTop: 2,
-            borderTop: '1px solid #E5E7EB',
-          }}
-        >
-          <IconButton
-            onClick={handleCopyProtocol}
-            aria-label="Copiar protocolo"
-            sx={{ 
-              color: '#005FDB',
-              backgroundColor: '#F3F4F6',
-              '&:hover': {
-                backgroundColor: '#E5E7EB',
-              },
-            }}
-          >
-            <ContentCopyIcon />
-          </IconButton>
-          <IconButton
-            onClick={handlePrint}
-            aria-label="Imprimir protocolo"
-            sx={{ 
-              color: '#005FDB',
-              backgroundColor: '#F3F4F6',
-              '&:hover': {
-                backgroundColor: '#E5E7EB',
-              },
-            }}
-          >
-            <PrintIcon />
-          </IconButton>
-        </Box>
-      </Paper>
+      <Card className={`mx-auto max-w-[480px] border border-border ${SECTION_SPACING}`}>
+        <CardContent className="py-6">
+          <p className="mb-4 text-xs font-semibold uppercase tracking-wider text-muted-foreground">
+            Protocolo de Registro
+          </p>
+          <ProtocolDisplay
+            protocol={report.protocol}
+            variant="block"
+            showCopy
+            onCopy={handleCopyProtocol}
+            copied={copied}
+            actions={
+              <Button
+                variant="outline"
+                size="icon"
+                onClick={handlePrint}
+                aria-label="Imprimir protocolo"
+                className="h-10 w-10 shrink-0 bg-muted hover:bg-muted/80"
+              >
+                <Printer className="h-5 w-5 text-primary" />
+              </Button>
+            }
+          />
+        </CardContent>
+      </Card>
 
-      <Alert severity="info" sx={{ marginBottom: 3, maxWidth: 600, marginX: 'auto' }}>
-        <Typography variant="body2">
-          <strong>Importante:</strong> Guarde este protocolo. Você precisará dele para 
-          acompanhar o andamento do seu registro na seção "Meus Registros".
-        </Typography>
+      {copied && (
+        <p
+          role="status"
+          className="mb-4 text-sm text-muted-foreground"
+          aria-live="polite"
+        >
+          Protocolo copiado para a área de transferência!
+        </p>
+      )}
+
+      <Alert variant="info" className={`mx-auto max-w-[480px] ${SECTION_SPACING}`}>
+        <AlertDescription className="py-1">
+          <strong>Importante:</strong> Guarde este protocolo. Você precisará dele para
+          acompanhar o andamento do seu registro na seção &quot;Meus Registros&quot;.
+        </AlertDescription>
       </Alert>
 
-      {/* Timeline Visual */}
-      <Box sx={{ maxWidth: 1200, marginX: 'auto', marginY: 4 }}>
+      <div className={`mx-auto w-full ${SECTION_SPACING}`}>
         <ProtocolTimeline />
-      </Box>
+      </div>
 
-      <Box 
-        sx={{ 
-          display: 'flex', 
-          flexDirection: { xs: 'column', sm: 'row' },
-          gap: 2, 
-          maxWidth: 500, 
-          marginX: 'auto',
-          marginTop: 4,
-        }}
-      >
+      <div className="mx-auto flex max-w-[480px] flex-col gap-4 sm:flex-row sm:flex-wrap sm:justify-center">
         <Button
-          variant="contained"
+          size="lg"
+          className="w-full rounded-lg bg-green-700 hover:bg-green-800 sm:w-auto"
           onClick={handleNewReport}
-          fullWidth
-          size="large"
           aria-label="Criar novo registro"
-          sx={{
-            backgroundColor: '#2E7D32',
-            fontWeight: 600,
-            paddingY: 1.5,
-            '&:hover': {
-              backgroundColor: '#1B5E20',
-            },
-          }}
         >
           Criar Novo Registro
         </Button>
+        {report.protocol && (
+          <Button size="lg" variant="outline" className="w-full rounded-lg sm:w-auto" asChild>
+            <Link to={`/protocolo/${encodeURIComponent(report.protocol)}`} aria-label="Ver detalhes do protocolo">
+              Ver detalhes do protocolo
+            </Link>
+          </Button>
+        )}
         <Button
-          variant="outlined"
-          href="/meus-registros"
-          fullWidth
-          size="large"
+          variant="outline"
+          size="lg"
+          className="w-full rounded-lg border-primary text-primary hover:bg-primary/10 sm:w-auto"
+          onClick={() => navigate('/meus-registros')}
           aria-label="Ver meus registros"
-          sx={{
-            borderColor: '#005FDB',
-            color: '#005FDB',
-            fontWeight: 600,
-            paddingY: 1.5,
-            '&:hover': {
-              borderColor: '#0048A8',
-              backgroundColor: '#F3F4F6',
-            },
-          }}
         >
           Ver Meus Registros
         </Button>
-      </Box>
-
-      <Snackbar
-        open={copied}
-        autoHideDuration={3000}
-        message="Protocolo copiado para a área de transferência!"
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
-      />
-    </Box>
+      </div>
+    </div>
   );
 };
-

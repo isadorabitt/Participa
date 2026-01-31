@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
-import { Box } from '@mui/material';
 import { useLocation } from 'react-router-dom';
 import { IzaButton } from './iza/IzaButton';
 import { IzaChat } from './iza/IzaChat';
+import { IZA_CONTEXT_EVENT, type IzaContextId } from './FieldTutorial';
 import { playNotificationSound, playMessageSound } from '../utils/soundUtils';
 
 interface Message {
@@ -101,6 +101,19 @@ const pageMessages: PageMessages = {
   },
 };
 
+const fieldContextMessages: Record<IzaContextId, string> = {
+  'novo-registro-descricao':
+    'Aqui você descreve o fato com suas palavras. Use o botão "Ver exemplo de descrição" ou "Usar modelo sugerido pela IZA" para preencher um modelo e só trocar o que está entre colchetes. Inclua data, local e o que aconteceu. Evite CPF, cartão ou dados sensíveis.',
+  'novo-registro-anexos':
+    'Os anexos são opcionais. Você pode gravar um áudio descrevendo o fato, enviar uma foto ou um vídeo. Isso complementa a descrição escrita e ajuda no atendimento.',
+  'novo-registro-localizacao':
+    'A localização é opcional. Se quiser, use "Usar minha localização" para enviar onde você está, ou digite um endereço. Isso ajuda a direcionar sua manifestação ao setor responsável pela região.',
+  'novo-registro-identificacao':
+    'Escolha entre registro anônimo (sem identificar quem enviou) ou identificado (com nome e contato). Em ambos os casos você receberá um protocolo para acompanhar.',
+  'novo-registro-resumo':
+    'Revise a descrição, anexos, localização e identificação. Se estiver tudo certo, clique em "Finalizar" para enviar. Você receberá um protocolo para acompanhar o andamento.',
+};
+
 export const VirtualAssistant = () => {
   const location = useLocation();
   const [isOpen, setIsOpen] = useState(false);
@@ -108,13 +121,19 @@ export const VirtualAssistant = () => {
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [messages, setMessages] = useState<Message[]>([]);
   const [currentHelpIndex, setCurrentHelpIndex] = useState(0);
+  const [pendingContextId, setPendingContextId] = useState<IzaContextId | null>(null);
   const [soundEnabled] = useState(true);
   const speechSynthesisRef = useRef<SpeechSynthesisUtterance | null>(null);
 
   const currentPageMessages = pageMessages[location.pathname] || pageMessages['/'];
 
   useEffect(() => {
-    if (isOpen && isEnabled && messages.length === 0) {
+    if (
+      isOpen &&
+      isEnabled &&
+      messages.length === 0 &&
+      !pendingContextId
+    ) {
       const welcomeMessage: Message = {
         id: 1,
         text: currentPageMessages.welcome,
@@ -124,7 +143,7 @@ export const VirtualAssistant = () => {
       setMessages([welcomeMessage]);
       speakMessage(welcomeMessage.text);
     }
-  }, [isOpen, isEnabled, location.pathname]);
+  }, [isOpen, isEnabled, location.pathname, pendingContextId]);
 
 
   const speakMessage = (text: string) => {
@@ -185,17 +204,55 @@ export const VirtualAssistant = () => {
     setIsOpen(false);
   };
 
-  // Listener para evento de abrir IZA
   useEffect(() => {
     const handleOpenIza = () => {
       handleOpen();
     };
 
-    window.addEventListener('open-iza-assistant', handleOpenIza);
-    return () => {
-      window.removeEventListener('open-iza-assistant', handleOpenIza);
+    const handleOpenWithContext = (e: Event) => {
+      const detail = (e as CustomEvent<{ contextId: IzaContextId }>).detail;
+      if (detail?.contextId && fieldContextMessages[detail.contextId]) {
+        setPendingContextId(detail.contextId);
+        setIsOpen(true);
+        playNotificationSound(soundEnabled);
+      }
     };
-  }, [messages.length, currentPageMessages]);
+
+    globalThis.addEventListener('open-iza-assistant', handleOpenIza);
+    globalThis.addEventListener(IZA_CONTEXT_EVENT, handleOpenWithContext);
+    return () => {
+      globalThis.removeEventListener('open-iza-assistant', handleOpenIza);
+      globalThis.removeEventListener(IZA_CONTEXT_EVENT, handleOpenWithContext);
+    };
+  }, [soundEnabled]);
+
+  useEffect(() => {
+    if (!isOpen || !pendingContextId) return;
+    const text = fieldContextMessages[pendingContextId];
+    if (!text) {
+      setPendingContextId(null);
+      return;
+    }
+    const contextMessage: Message = {
+      id: Date.now(),
+      text,
+      type: 'assistant',
+      timestamp: new Date(),
+    };
+    setMessages((prev) => {
+      const hasWelcome = prev.some((m) => m.type === 'assistant');
+      if (hasWelcome) return [...prev, contextMessage];
+      const welcome: Message = {
+        id: 1,
+        text: currentPageMessages.welcome,
+        type: 'assistant',
+        timestamp: new Date(),
+      };
+      return [welcome, contextMessage];
+    });
+    speakMessage(text);
+    setPendingContextId(null);
+  }, [isOpen, pendingContextId, currentPageMessages.welcome]);
 
   const handleToggleEnabled = () => {
     if (isEnabled) {
@@ -251,23 +308,14 @@ export const VirtualAssistant = () => {
 
   return (
     <>
-      {/* Botão Flutuante com Animação */}
-      <Box
-        sx={{
-          position: 'fixed',
-          bottom: { xs: 16, sm: 24 },
-          right: { xs: 16, sm: 24 },
-          zIndex: 1000,
-        }}
-      >
+      <div className="fixed bottom-4 right-4 z-[1000] sm:bottom-6 sm:right-6">
         <IzaButton
           onClick={handleOpen}
           isPulsing={shouldPulse}
           hasNotification={hasNotification}
         />
-      </Box>
+      </div>
 
-      {/* Chat com Fade-in e Modo Reduzido */}
       <IzaChat
         isOpen={isOpen}
         onClose={handleClose}

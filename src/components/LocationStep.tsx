@@ -1,15 +1,12 @@
-import {
-  Box,
-  Typography,
-  Button,
-  TextField,
-  Alert,
-  Paper,
-  CircularProgress,
-} from '@mui/material';
-import { LocationOn as LocationOnIcon, MyLocation as MyLocationIcon } from '@mui/icons-material';
 import { useReport } from '../context/ReportContext';
 import { useState } from 'react';
+import { Button } from './ui/button';
+import { Input } from './ui/input';
+import { Label } from './ui/label';
+import { Alert, AlertDescription } from './ui/alert';
+import { Card, CardContent, CardHeader } from './ui/card';
+import { FieldTutorial } from './FieldTutorial';
+import { MapPin, Locate, Loader2 } from 'lucide-react';
 
 export const LocationStep = () => {
   const { report, updateLocation } = useReport();
@@ -22,34 +19,22 @@ export const LocationStep = () => {
       setError('Geolocalização não é suportada pelo seu navegador.');
       return;
     }
-
     setIsLoading(true);
     setError(null);
-
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-
-        // Tentar obter endereço reverso (opcional)
         let addressText = '';
         try {
-          // Usando Nominatim (OpenStreetMap) para geocodificação reversa
           const response = await fetch(
             `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=18&addressdetails=1`
           );
           const data = await response.json();
-          if (data.display_name) {
-            addressText = data.display_name;
-          }
-        } catch (err) {
-          // Erro silencioso - endereço é opcional
+          if (data.display_name) addressText = data.display_name;
+        } catch {
+          // endereço opcional
         }
-
-        updateLocation({
-          latitude,
-          longitude,
-          address: addressText || undefined,
-        });
+        updateLocation({ latitude, longitude, address: addressText || undefined });
         setAddress(addressText);
         setIsLoading(false);
       },
@@ -61,20 +46,35 @@ export const LocationStep = () => {
         );
         setIsLoading(false);
       },
-      {
-        enableHighAccuracy: true,
-        timeout: 10000,
-        maximumAge: 0,
-      }
+      { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
     );
   };
 
-  const handleManualLocation = () => {
+  const handleManualLocation = async () => {
+    const trimmed = address.trim();
+    if (!trimmed) return;
     if (report.location) {
-      updateLocation({
-        ...report.location,
-        address: address || undefined,
-      });
+      updateLocation({ ...report.location, address: trimmed });
+      return;
+    }
+    setError(null);
+    setIsLoading(true);
+    try {
+      const res = await fetch(
+        `https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(trimmed)}&limit=1`
+      );
+      const data = await res.json();
+      if (data?.[0]) {
+        const lat = parseFloat(data[0].lat);
+        const lon = parseFloat(data[0].lon);
+        updateLocation({ latitude: lat, longitude: lon, address: trimmed });
+      } else {
+        setError('Endereço não encontrado. Tente outro ou use a localização atual.');
+      }
+    } catch {
+      setError('Erro ao buscar endereço. Tente novamente.');
+    } finally {
+      setIsLoading(false);
     }
   };
 
@@ -84,101 +84,88 @@ export const LocationStep = () => {
   };
 
   return (
-    <Box sx={{ width: '100%' }}>
-      <Typography variant="h5" gutterBottom>
-        Localização (Opcional)
-      </Typography>
-      <Typography variant="body2" color="text.secondary" paragraph>
-        Você pode fornecer a localização do registro. Isso ajuda a identificar o local exato 
-        onde o fato ocorreu.
-      </Typography>
+    <div className="w-full">
+      <div className="mb-2 flex items-center gap-2">
+        <h2 className="text-xl font-semibold">Localização (Opcional)</h2>
+        <FieldTutorial
+          title="Localização (opcional)"
+          description="Você pode informar onde o fato ocorreu: use 'Usar minha localização' para enviar suas coordenadas ou digite um endereço. A localização não é obrigatória e pode ser pulada."
+          izaContextId="novo-registro-localizacao"
+        />
+      </div>
+      <p className="mb-6 text-sm text-muted-foreground">
+        Você pode fornecer a localização do registro. Isso ajuda a identificar o local exato onde o fato ocorreu.
+      </p>
 
       {error && (
-        <Alert severity="warning" sx={{ marginBottom: 2 }} role="alert">
-          {error}
+        <Alert variant="warning" className="mb-4" role="alert">
+          <AlertDescription>{error}</AlertDescription>
         </Alert>
       )}
 
       {!report.location ? (
-        <Box sx={{ display: 'flex', flexDirection: 'column', gap: 2 }}>
+        <div className="flex flex-col gap-4">
           <Button
-            variant="contained"
-            startIcon={isLoading ? <CircularProgress size={20} /> : <MyLocationIcon />}
+            className="w-full"
+            size="lg"
             onClick={getCurrentLocation}
             disabled={isLoading}
             aria-label="Obter localização atual"
-            fullWidth
-            size="large"
           >
+            {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Locate className="h-5 w-5" />}
             {isLoading ? 'Obtendo localização...' : 'Usar Minha Localização Atual'}
           </Button>
 
-          <Typography variant="body2" color="text.secondary" align="center">
-            ou
-          </Typography>
+          <p className="text-center text-sm text-muted-foreground">ou</p>
 
-          <Paper elevation={2} sx={{ padding: 3 }}>
-            <Typography variant="subtitle2" gutterBottom>
-              Inserir Localização Manualmente
-            </Typography>
-            <TextField
-              fullWidth
-              label="Endereço ou Descrição do Local"
-              value={address}
-              onChange={(e) => setAddress(e.target.value)}
-              placeholder="Ex: Rua Exemplo, 123 - Bairro - Cidade"
-              aria-label="Endereço ou descrição do local"
-              sx={{ marginBottom: 2 }}
-            />
-            <Button
-              variant="outlined"
-              onClick={handleManualLocation}
-              disabled={!address.trim()}
-              aria-label="Salvar localização manual"
-            >
-              Salvar Localização
-            </Button>
-          </Paper>
-        </Box>
+          <Card>
+            <CardHeader>
+              <h3 className="text-sm font-semibold">Inserir Localização Manualmente</h3>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="address">Endereço ou Descrição do Local</Label>
+                <Input
+                  id="address"
+                  value={address}
+                  onChange={(e) => setAddress(e.target.value)}
+                  placeholder="Ex: Rua Exemplo, 123 - Bairro - Cidade"
+                  aria-label="Endereço ou descrição do local"
+                />
+              </div>
+              <Button variant="outline" onClick={handleManualLocation} disabled={!address.trim()} aria-label="Salvar localização manual">
+                Salvar Localização
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
       ) : (
-        <Paper elevation={2} sx={{ padding: 3 }}>
-          <Box sx={{ display: 'flex', alignItems: 'flex-start', gap: 2 }}>
-            <LocationOnIcon color="primary" sx={{ marginTop: 0.5 }} />
-            <Box sx={{ flex: 1 }}>
-              <Typography variant="subtitle1" gutterBottom>
-                Localização Definida
-              </Typography>
+        <Card>
+          <CardContent className="flex gap-4 p-4">
+            <MapPin className="mt-1 h-5 w-5 shrink-0 text-primary" aria-hidden />
+            <div className="flex-1">
+              <h3 className="font-medium">Localização Definida</h3>
               {report.location.address && (
-                <Typography variant="body2" color="text.secondary" paragraph>
+                <p className="text-sm text-muted-foreground">
                   <strong>Endereço:</strong> {report.location.address}
-                </Typography>
+                </p>
               )}
-              <Typography variant="body2" color="text.secondary">
-                <strong>Coordenadas:</strong> {report.location.latitude.toFixed(6)},{' '}
-                {report.location.longitude.toFixed(6)}
-              </Typography>
-              <Button
-                variant="outlined"
-                color="error"
-                size="small"
-                onClick={removeLocation}
-                aria-label="Remover localização"
-                sx={{ marginTop: 2 }}
-              >
+              <p className="text-sm text-muted-foreground">
+                <strong>Coordenadas:</strong> {report.location.latitude.toFixed(6)}, {report.location.longitude.toFixed(6)}
+              </p>
+              <Button variant="outline" size="sm" className="mt-2 border-destructive text-destructive hover:bg-destructive/10" onClick={removeLocation} aria-label="Remover localização">
                 Remover Localização
               </Button>
-            </Box>
-          </Box>
-        </Paper>
+            </div>
+          </CardContent>
+        </Card>
       )}
 
-      <Alert severity="info" sx={{ marginTop: 3 }} role="note">
-        <Typography variant="body2">
-          A localização é opcional. Se você não deseja fornecer sua localização, 
-          pode pular esta etapa.
-        </Typography>
+      <Alert variant="info" className="mt-6" role="note">
+        <AlertDescription>
+          A localização é opcional. Se você não deseja fornecer sua localização, pode pular esta etapa.
+        </AlertDescription>
       </Alert>
-    </Box>
+    </div>
   );
 };
-

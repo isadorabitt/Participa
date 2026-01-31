@@ -1,6 +1,5 @@
-import { Fab } from '@mui/material';
-import { SmartToy as SmartToyIcon } from '@mui/icons-material';
-import { Box } from '@mui/material';
+import { Button } from '../ui/button';
+import { Bot } from 'lucide-react';
 
 interface IzaButtonProps {
   onClick: () => void;
@@ -8,131 +7,37 @@ interface IzaButtonProps {
   hasNotification?: boolean;
 }
 
-export const IzaButton = ({ onClick, isPulsing = false, hasNotification = false }: IzaButtonProps) => {
-  return (
-    <Box
-      sx={{
-        position: 'relative',
-        display: 'inline-block',
-      }}
+export const IzaButton = ({
+  onClick,
+  isPulsing = false,
+  hasNotification = false,
+}: IzaButtonProps) => (
+  <div className="relative inline-block">
+    {isPulsing && (
+      <span
+        className="absolute left-1/2 top-1/2 h-16 w-16 -translate-x-1/2 -translate-y-1/2 rounded-full bg-participa-pink opacity-30 animate-[pulse-ring_2s_cubic-bezier(0.4,0,0.6,1)_infinite]"
+        aria-hidden
+      />
+    )}
+    {hasNotification && (
+      <span
+        className="absolute right-2 top-2 z-10 h-3 w-3 rounded-full border-2 border-white bg-amber-400 animate-[notification-blink_1.5s_ease-in-out_infinite]"
+        aria-hidden
+      />
+    )}
+    <Button
+      type="button"
+      size="icon-lg"
+      onClick={onClick}
+      aria-label="Abrir assistente virtual IZA"
+      className="relative h-16 w-16 rounded-full bg-participa-pink shadow-lg hover:bg-participa-pink-dark hover:scale-110 hover:shadow-xl active:scale-95 focus-visible:outline focus-visible:outline-3 focus-visible:outline-participa-pink focus-visible:outline-offset-2"
+      style={
+        isPulsing
+          ? { animation: 'button-float 3s ease-in-out infinite' }
+          : undefined
+      }
     >
-      {/* Círculo pulsante de fundo */}
-      {isPulsing && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            transform: 'translate(-50%, -50%)',
-            width: 64,
-            height: 64,
-            borderRadius: '50%',
-            backgroundColor: '#E1007A',
-            opacity: 0.3,
-            animation: 'pulse-ring 2s cubic-bezier(0.4, 0, 0.6, 1) infinite',
-            '@keyframes pulse-ring': {
-              '0%': {
-                transform: 'translate(-50%, -50%) scale(1)',
-                opacity: 0.5,
-              },
-              '50%': {
-                transform: 'translate(-50%, -50%) scale(1.3)',
-                opacity: 0.2,
-              },
-              '100%': {
-                transform: 'translate(-50%, -50%) scale(1.6)',
-                opacity: 0,
-              },
-            },
-          }}
-        />
-      )}
-
-      {/* Indicador de notificação */}
-      {hasNotification && (
-        <Box
-          sx={{
-            position: 'absolute',
-            top: 8,
-            right: 8,
-            width: 12,
-            height: 12,
-            borderRadius: '50%',
-            backgroundColor: '#FFC107',
-            border: '2px solid white',
-            zIndex: 1,
-            animation: 'notification-blink 1.5s ease-in-out infinite',
-            '@keyframes notification-blink': {
-              '0%, 100%': {
-                opacity: 1,
-                transform: 'scale(1)',
-              },
-              '50%': {
-                opacity: 0.7,
-                transform: 'scale(1.1)',
-              },
-            },
-          }}
-        />
-      )}
-
-      <Fab
-        color="primary"
-        aria-label="Abrir assistente virtual IZA"
-        onClick={onClick}
-        sx={{
-          position: 'relative',
-          backgroundColor: '#E1007A',
-          width: 64,
-          height: 64,
-          transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
-          animation: isPulsing
-            ? 'button-float 3s ease-in-out infinite'
-            : 'none',
-          '&:hover': {
-            backgroundColor: '#B80062',
-            transform: 'scale(1.1)',
-            boxShadow: '0px 8px 16px rgba(225, 0, 122, 0.4)',
-          },
-          '&:active': {
-            transform: 'scale(0.95)',
-          },
-          '&:focus-visible': {
-            outline: '3px solid',
-            outlineColor: '#E1007A',
-            outlineOffset: '2px',
-          },
-          '@keyframes button-float': {
-            '0%, 100%': {
-              transform: 'translateY(0px)',
-            },
-            '50%': {
-              transform: 'translateY(-8px)',
-            },
-          },
-        }}
-      >
-        <SmartToyIcon
-          sx={{
-            fontSize: 32,
-            animation: isPulsing
-              ? 'icon-wiggle 2s ease-in-out infinite'
-              : 'none',
-            '@keyframes icon-wiggle': {
-              '0%, 100%': {
-                transform: 'rotate(0deg)',
-              },
-              '25%': {
-                transform: 'rotate(-5deg)',
-              },
-              '75%': {
-                transform: 'rotate(5deg)',
-              },
-            },
-          }}
-        />
-      </Fab>
-    </Box>
-  );
-};
-
+      <Bot className="h-8 w-8" />
+    </Button>
+  </div>
+);
