@@ -39,6 +39,7 @@ export function ProtocolDetail() {
   const protocolId = protocolIdEncoded ? decodeURIComponent(protocolIdEncoded) : '';
   const navigate = useNavigate();
   const [report, setReport] = useState<StoredReport | null>(null);
+  const [trail, setTrail] = useState<TrailEvent[]>([]);
   const [notFound, setNotFound] = useState(false);
   const [copied, setCopied] = useState(false);
 
@@ -213,7 +214,7 @@ export function ProtocolDetail() {
             <div>
               <h3 className="mb-2 text-sm font-medium text-muted-foreground">Identificação</h3>
               <p className="text-sm text-foreground">
-                {report.identification.type === 'anonymous' ? 'Registro anônimo' : 'Registro identificado'}
+                {report.identification?.type === 'anonymous' ? 'Registro anônimo' : 'Registro identificado'}
               </p>
             </div>
 
