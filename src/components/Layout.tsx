@@ -75,7 +75,7 @@ export function Layout() {
         >
           <Outlet />
         </main>
-        </div>
+      </div>
       <Footer />
       <VirtualAssistant />
       <ColorBlindFilters />
